@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 class JsonParserTest {
     // TODO: Refactor the expectedTestRun and expectedTestList generations
     @Test
-    void TestCanParseTestModel() {
+    void testCanParseTestModel() {
         String json = """
                     {
                       "name": "Test Scenario Name",
@@ -92,7 +92,7 @@ class JsonParserTest {
     }
 
     @Test
-    void TestCanParseTestsModel() {
+    void testCanParseTestsModel() {
         String json = """
                 {
                   "tests": [
