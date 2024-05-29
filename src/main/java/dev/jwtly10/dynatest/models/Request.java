@@ -1,5 +1,6 @@
 package dev.jwtly10.dynatest.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import dev.jwtly10.dynatest.enums.Method;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -18,8 +19,10 @@ public class Request {
     private Method method;
     @NotNull(message = "URL cannot be empty")
     private String url;
-    private Headers headers;
+    @JsonProperty("headers")
+    private Headers requestHeaders;
     private QueryParams queryParams;
+    @JsonProperty("body")
     private JsonBody jsonBody;
     private StoreValues storeValues;
 
@@ -34,18 +37,18 @@ public class Request {
     }
 
     public String getHeader(String key) {
-        return headers.getHeader(key);
+        return requestHeaders.getHeader(key);
     }
 
     public void setHeader(String key, String value) {
-        headers.setHeader(key, value);
+        requestHeaders.setHeader(key, value);
     }
 
     public Map<String, String> getHeaders() {
-        if (headers == null) {
+        if (requestHeaders == null) {
             return new HashMap<>();
         }
-        return headers.getHeaders();
+        return requestHeaders.getHeaders();
     }
 
     public Object getParam(String key) {
@@ -77,6 +80,10 @@ public class Request {
             return new HashMap<>();
         }
         return storeValues.getValues();
+    }
+
+    public JsonBody getBody() {
+        return jsonBody;
     }
 
     public Map<String, Object> getJsonBody() {

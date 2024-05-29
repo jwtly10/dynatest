@@ -20,7 +20,7 @@ public class HttpClientServiceTest {
         Request request = Request.builder()
                 .method(Method.GET)
                 .url("https://httpbin.org/get")
-                .headers(new Headers(Map.of("Content-Type", "application/json", "Accept", "application/json", "fakeapikey", "1234")))
+                .requestHeaders(new Headers(Map.of("Content-Type", "application/json", "Accept", "application/json", "fakeapikey", "1234")))
                 .build();
 
         Response res = client.makeRequest(request);
