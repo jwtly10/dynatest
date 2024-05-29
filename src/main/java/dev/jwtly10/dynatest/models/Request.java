@@ -1,9 +1,11 @@
 package dev.jwtly10.dynatest.models;
 
 import dev.jwtly10.dynatest.enums.Method;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
+import org.springframework.http.HttpMethod;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,11 +14,23 @@ import java.util.Map;
 @Builder
 @Jacksonized
 public class Request {
+    @NotNull(message = "Method cannot be empty")
     private Method method;
+    @NotNull(message = "URL cannot be empty")
     private String url;
     private Headers headers;
     private QueryParams queryParams;
     private Body body;
+
+    public HttpMethod getMethod() {
+        // Supported Methods
+        return switch (method) {
+            case GET -> HttpMethod.GET;
+            case POST -> HttpMethod.POST;
+            case PUT -> HttpMethod.PUT;
+            case DELETE -> HttpMethod.DELETE;
+        };
+    }
 
     public String getHeader(String key) {
         return headers.getHeader(key);
@@ -53,6 +67,6 @@ public class Request {
         if (body == null) {
             return new HashMap<>();
         }
-        return body.getData();
+        return body.getBodyData();
     }
 }

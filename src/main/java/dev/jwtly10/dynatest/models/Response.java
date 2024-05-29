@@ -50,6 +50,6 @@ public class Response {
         if (body == null) {
             return new HashMap<>();
         }
-        return body.getData();
+        return body.getBodyData();
     }
 }

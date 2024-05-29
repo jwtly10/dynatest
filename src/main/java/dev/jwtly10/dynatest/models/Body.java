@@ -14,18 +14,22 @@ import java.util.TreeMap;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Body {
-    private Map<String, Object> data = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    private Map<String, Object> bodyData = new HashMap<>();
 
     public Object getKey(String key) {
-        return data.get(key);
+        return bodyData.get(key);
     }
 
     @JsonAnySetter
-    public void setData(String key, Object value) {
+    public void setBodyData(String key, Object value) {
         if (value instanceof Map) {
-            flattenMap(key, (Map<String, Object>) value);
+            if (((Map<?, ?>) value).isEmpty()) {
+                bodyData.put(key, new TreeMap<>());
+            } else {
+                flattenMap(key, (Map<String, Object>) value);
+            }
         } else {
-            data.put(key, value);
+            bodyData.put(key, value);
         }
     }
 
@@ -37,13 +41,13 @@ public class Body {
                 // Recurse if the value is also a Map
                 flattenMap(newKey, (Map<String, Object>) entry.getValue());
             } else {
-                data.put(newKey, entry.getValue());
+                bodyData.put(newKey, entry.getValue());
             }
         }
     }
 
     @JsonAnyGetter
-    public Map<String, Object> getData() {
-        return new HashMap<>(data);
+    public Map<String, Object> getBodyData() {
+        return new HashMap<>(bodyData);
     }
 }
