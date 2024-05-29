@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Map;
 
@@ -31,15 +32,20 @@ public class HttpClientService implements HttpService {
     public Response makeRequest(Request request) throws RestClientException {
         log.info("Making new client request");
         log.debug("Request: {}", request);
+
         HttpHeaders headers = new HttpHeaders();
         request.getHeaders().forEach(headers::set);
+
+        Map<String, String> queryParams = request.getParams();
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(request.getUrl());
+        queryParams.forEach(urlBuilder::queryParam);
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request.getBody(), headers);
 
         ResponseEntity<String> res = null;
         Body responseBodyMap = new Body();
         try {
-            res = restTemplate.exchange(request.getUrl(), request.getMethod(), entity, String.class);
+            res = restTemplate.exchange(urlBuilder.toUriString(), request.getMethod(), entity, String.class);
         } catch (Exception e) {
             log.error("Error making http request", e);
             responseBodyMap.setBodyData(Map.of(
