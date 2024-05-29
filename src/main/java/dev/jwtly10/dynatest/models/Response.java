@@ -13,8 +13,7 @@ import java.util.Map;
 public class Response {
     private int statusCode;
     private Headers headers;
-    private Body body;
-    private StoreValues storeValues;
+    private JsonBody jsonBody;
 
     public String getHeader(String key) {
         return headers.getHeader(key);
@@ -31,25 +30,11 @@ public class Response {
         return headers.getHeaders();
     }
 
-    public String getStoredValue(String key) {
-        return storeValues.getValue(key);
-    }
 
-    public void setStoredValue(String key, String value) {
-        storeValues.setValue(key, value);
-    }
-
-    public Map<String, String> getStoredValues() {
-        if (storeValues == null) {
+    public Map<String, Object> getJsonBody() {
+        if (jsonBody == null) {
             return new HashMap<>();
         }
-        return storeValues.getValues();
-    }
-
-    public Map<String, Object> getBody() {
-        if (body == null) {
-            return new HashMap<>();
-        }
-        return body.getBodyData();
+        return jsonBody.getBodyData();
     }
 }

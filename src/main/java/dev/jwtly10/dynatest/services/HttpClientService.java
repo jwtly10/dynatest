@@ -1,8 +1,8 @@
 package dev.jwtly10.dynatest.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import dev.jwtly10.dynatest.models.Body;
 import dev.jwtly10.dynatest.models.Headers;
+import dev.jwtly10.dynatest.models.JsonBody;
 import dev.jwtly10.dynatest.models.Request;
 import dev.jwtly10.dynatest.models.Response;
 import dev.jwtly10.dynatest.util.JsonParser;
@@ -40,15 +40,15 @@ public class HttpClientService implements HttpService {
         UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(request.getUrl());
         queryParams.forEach(urlBuilder::queryParam);
 
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request.getBody(), headers);
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request.getJsonBody(), headers);
 
         ResponseEntity<String> res = null;
-        Body responseBodyMap = new Body();
+        JsonBody responseJsonBodyMap = new JsonBody();
         try {
             res = restTemplate.exchange(urlBuilder.toUriString(), request.getMethod(), entity, String.class);
         } catch (Exception e) {
             log.error("Error making http request", e);
-            responseBodyMap.setBodyData(Map.of(
+            responseJsonBodyMap.setBodyData(Map.of(
                     "error", "Error making request",
                     "raw", e.getMessage() != null ? e.getMessage() : "No stacktrace")
             );
@@ -62,10 +62,10 @@ public class HttpClientService implements HttpService {
             res.getHeaders().forEach((k, v) -> responseHeaders.setHeader(k, v.get(0)));
 
             try {
-                responseBodyMap = JsonParser.fromJson(res.getBody(), Body.class);
+                responseJsonBodyMap = JsonParser.fromJson(res.getBody(), JsonBody.class);
             } catch (JsonProcessingException e) {
                 log.error("Error parsing response body", e);
-                responseBodyMap.setBodyData(Map.of(
+                responseJsonBodyMap.setBodyData(Map.of(
                         "error", "Error parsing response body",
                         "type", responseHeaders.getHeader("Content-Type") != null ? responseHeaders.getHeader("Content-Type") : "No Content-Type",
                         "raw", res.getBody() != null ? res.getBody() : "No response body")
@@ -74,7 +74,7 @@ public class HttpClientService implements HttpService {
         }
 
         return Response.builder()
-                .body(responseBodyMap)
+                .jsonBody(responseJsonBodyMap)
                 .statusCode(res == null ? 500 : res.getStatusCode().value())
                 .headers(responseHeaders)
                 .build();

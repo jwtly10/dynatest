@@ -27,7 +27,7 @@ public class HttpClientServiceTest {
 
         assertEquals(200, res.getStatusCode());
         assertNotNull(res.getHeaders());
-        assertNotNull(res.getBody());
+        assertNotNull(res.getJsonBody());
     }
 
     @Test
@@ -45,8 +45,8 @@ public class HttpClientServiceTest {
 
         assertEquals(200, res.getStatusCode());
         assertNotNull(res.getHeaders());
-        assertEquals("1", res.getBody().get("args.id"));
-        assertEquals("2", res.getBody().get("args.page"));
+        assertEquals("1", res.getJsonBody().get("args.id"));
+        assertEquals("2", res.getJsonBody().get("args.page"));
     }
 
     @Test
@@ -54,22 +54,22 @@ public class HttpClientServiceTest {
         RestTemplate rt = new RestTemplateConfig().restTemplate();
         HttpClientService client = new HttpClientService(rt);
 
-        Body body = new Body();
-        body.setBodyData(Map.of(
+        JsonBody jsonBody = new JsonBody();
+        jsonBody.setBodyData(Map.of(
                 "name", "unit_test",
                 "age", 10));
 
         Request request = Request.builder()
                 .method(Method.POST)
                 .url("https://httpbin.org/post")
-                .body(body)
+                .jsonBody(jsonBody)
                 .build();
 
         Response res = client.makeRequest(request);
 
         assertEquals(200, res.getStatusCode());
         assertNotNull(res.getHeaders());
-        assertEquals("unit_test", res.getBody().get("json.name"));
+        assertEquals("unit_test", res.getJsonBody().get("json.name"));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class HttpClientServiceTest {
 
         Response res = client.makeRequest(request);
         assertEquals(500, res.getStatusCode());
-        assertNotNull(res.getBody().get("error"));
+        assertNotNull(res.getJsonBody().get("error"));
     }
 
     @Test

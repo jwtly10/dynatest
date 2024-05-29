@@ -13,7 +13,7 @@ import java.util.TreeMap;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Body {
+public class JsonBody {
     private Map<String, Object> bodyData = new HashMap<>();
 
     public Object getKey(String key) {

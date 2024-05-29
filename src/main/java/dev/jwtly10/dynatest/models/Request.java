@@ -20,7 +20,8 @@ public class Request {
     private String url;
     private Headers headers;
     private QueryParams queryParams;
-    private Body body;
+    private JsonBody jsonBody;
+    private StoreValues storeValues;
 
     public HttpMethod getMethod() {
         // Supported Methods
@@ -63,10 +64,25 @@ public class Request {
 
     }
 
-    public Map<String, Object> getBody() {
-        if (body == null) {
+    public String getStoredValue(String key) {
+        return storeValues.getValue(key);
+    }
+
+    public void setStoredValue(String key, String value) {
+        storeValues.setValue(key, value);
+    }
+
+    public Map<String, String> getStoredValues() {
+        if (storeValues == null) {
             return new HashMap<>();
         }
-        return body.getBodyData();
+        return storeValues.getValues();
+    }
+
+    public Map<String, Object> getJsonBody() {
+        if (jsonBody == null) {
+            return new HashMap<>();
+        }
+        return jsonBody.getBodyData();
     }
 }

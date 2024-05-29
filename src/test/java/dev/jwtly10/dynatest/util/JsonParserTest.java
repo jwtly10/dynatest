@@ -32,13 +32,17 @@ class JsonParserTest {
                             "queryParams": {
                               "id": "{previousValue}"
                             },
-                            "body": {
+                            "jsonBody": {
                               "name": "test",
                               "age": 10,
                               "address": {
                                   "city": "London",
                                   "country": "UK"
                               }
+                            },
+                            "storeValues": {
+                              "token": "responseBody.token",
+                              "userId": "responseBody.user.id"
                             }
                           },
                           "response": {
@@ -46,12 +50,8 @@ class JsonParserTest {
                             "headers":{
                               "Content-Type": "application/json"
                             },
-                            "body":{
+                            "jsonBody":{
                                 "message":"successful request"
-                            },
-                            "storeValues": {
-                              "token": "responseBody.token",
-                              "userId": "responseBody.user.id"
                             }
                           }
                         }
@@ -72,17 +72,15 @@ class JsonParserTest {
             assertEquals("https://api.example.com/resource", request.getUrl());
             assertEquals("Bearer {token}", request.getHeader("Authorization"));
             assertEquals("{previousValue}", request.getParam("id"));
-            assertEquals("test", request.getBody().get("name"));
-            assertEquals(10, request.getBody().get("age"));
-            assertEquals("London", request.getBody().get("address.city"));
-            assertEquals("UK", request.getBody().get("address.country"));
+            assertEquals("test", request.getJsonBody().get("name"));
+            assertEquals(10, request.getJsonBody().get("age"));
+            assertEquals("London", request.getJsonBody().get("address.city"));
+            assertEquals("UK", request.getJsonBody().get("address.country"));
 
             Response response = step.getResponse();
             assertEquals(200, response.getStatusCode());
             assertEquals("application/json", response.getHeader("Content-Type"));
-            assertEquals("successful request", response.getBody().get("message"));
-            assertEquals("responseBody.token", response.getStoredValue("token"));
-            assertEquals("responseBody.user.id", response.getStoredValue("userId"));
+            assertEquals("successful request", response.getJsonBody().get("message"));
         });
     }
 
@@ -106,18 +104,18 @@ class JsonParserTest {
                             "queryParams": {
                               "id": "{previousValue}"
                             },
-                            "body": {
+                            "jsonBody": {
                               "age": 10
+                            },
+                            "storeValues": {
+                              "token": "responseBody.token",
+                              "userId": "responseBody.user.id"
                             }
                           },
                           "response": {
                             "statusCode": 200,
                             "headers": {
                               "Authorization": "Bearer {token}"
-                            },
-                            "storeValues": {
-                              "token": "responseBody.token",
-                              "userId": "responseBody.user.id"
                             }
                           }
                         }
@@ -137,14 +135,14 @@ class JsonParserTest {
                             },
                             "queryParams": {
                               "id": "{previousValue}"
-                            }
-                          },
-                          "response": {
-                            "statusCode": 200,
+                            },
                             "storeValues": {
                               "token": "responseBody.token",
                               "userId": "responseBody.user.id"
                             }
+                          },
+                          "response": {
+                            "statusCode": 200
                           }
                         }
                       ]
@@ -164,11 +162,9 @@ class JsonParserTest {
         assertEquals("https://api.example.com/resource", actualTestList.getTests().get(0).getSteps().get(0).getRequest().getUrl());
         assertEquals("application/json", actualTestList.getTests().get(0).getSteps().get(0).getRequest().getHeader("Content-Type"));
         assertEquals("{previousValue}", actualTestList.getTests().get(0).getSteps().get(0).getRequest().getParam("id"));
-        assertEquals(10, actualTestList.getTests().get(0).getSteps().get(0).getRequest().getBody().get("age"));
+        assertEquals(10, actualTestList.getTests().get(0).getSteps().get(0).getRequest().getJsonBody().get("age"));
         assertEquals(200, actualTestList.getTests().get(0).getSteps().get(0).getResponse().getStatusCode());
         assertEquals("Bearer {token}", actualTestList.getTests().get(0).getSteps().get(0).getResponse().getHeader("Authorization"));
-        assertEquals("responseBody.token", actualTestList.getTests().get(0).getSteps().get(0).getResponse().getStoredValues().get("token"));
-        assertEquals("responseBody.user.id", actualTestList.getTests().get(0).getSteps().get(0).getResponse().getStoredValues().get("userId"));
 
         assertEquals("Test Scenario Name 2", actualTestList.getTests().get(1).getName());
         assertEquals("Description of what this test scenario does", actualTestList.getTests().get(1).getDescription());
@@ -177,11 +173,9 @@ class JsonParserTest {
         assertEquals("https://api.example.com/resource", actualTestList.getTests().get(1).getSteps().get(0).getRequest().getUrl());
         assertEquals("Bearer {token}", actualTestList.getTests().get(1).getSteps().get(0).getRequest().getHeader("Authorization"));
         assertEquals("{previousValue}", actualTestList.getTests().get(1).getSteps().get(0).getRequest().getParam("id"));
-        assertEquals(new HashMap<>(), actualTestList.getTests().get(1).getSteps().get(0).getRequest().getBody());
+        assertEquals(new HashMap<>(), actualTestList.getTests().get(1).getSteps().get(0).getRequest().getJsonBody());
         assertEquals(200, actualTestList.getTests().get(1).getSteps().get(0).getResponse().getStatusCode());
         assertEquals(new HashMap<>(), actualTestList.getTests().get(1).getSteps().get(0).getResponse().getHeaders());
-        assertEquals("responseBody.token", actualTestList.getTests().get(1).getSteps().get(0).getResponse().getStoredValues().get("token"));
-        assertEquals("responseBody.user.id", actualTestList.getTests().get(1).getSteps().get(0).getResponse().getStoredValues().get("userId"));
     }
 
     @Test
@@ -202,7 +196,7 @@ class JsonParserTest {
                             "queryParams": {
                               "id": "{previousValue}"
                             },
-                            "body": {
+                            "jsonBody": {
                               "name": "test",
                               "age": 10,
                               "address": {
