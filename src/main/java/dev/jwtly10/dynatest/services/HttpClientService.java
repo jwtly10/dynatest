@@ -5,7 +5,7 @@ import dev.jwtly10.dynatest.models.Headers;
 import dev.jwtly10.dynatest.models.JsonBody;
 import dev.jwtly10.dynatest.models.Request;
 import dev.jwtly10.dynatest.models.Response;
-import dev.jwtly10.dynatest.util.JsonParser;
+import dev.jwtly10.dynatest.parser.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

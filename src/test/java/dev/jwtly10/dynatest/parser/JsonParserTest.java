@@ -1,4 +1,4 @@
-package dev.jwtly10.dynatest.util;
+package dev.jwtly10.dynatest.parser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.jwtly10.dynatest.models.Request;
