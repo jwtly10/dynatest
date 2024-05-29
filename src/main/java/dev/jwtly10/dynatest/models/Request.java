@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
 
-import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
@@ -26,7 +26,10 @@ public class Request {
         headers.setHeader(key, value);
     }
 
-    public Map<String, String> getAllHeaders() {
+    public Map<String, String> getHeaders() {
+        if (headers == null) {
+            return new HashMap<>();
+        }
         return headers.getHeaders();
     }
 
@@ -38,8 +41,18 @@ public class Request {
         queryParams.setParam(key, value);
     }
 
-    public Map<String, Object> getAllParams() {
+    public Map<String, String> getParams() {
+        if (queryParams == null) {
+            return new HashMap<>();
+        }
         return queryParams.getParams();
 
+    }
+
+    public Map<String, Object> getBody() {
+        if (body == null) {
+            return new HashMap<>();
+        }
+        return body.getData();
     }
 }

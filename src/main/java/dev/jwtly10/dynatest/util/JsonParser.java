@@ -1,7 +1,6 @@
 package dev.jwtly10.dynatest.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonParser {

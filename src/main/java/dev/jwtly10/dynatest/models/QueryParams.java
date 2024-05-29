@@ -25,7 +25,7 @@ public class QueryParams {
     }
 
     @JsonAnyGetter
-    public Map<String, Object> getParams() {
+    public Map<String, String> getParams() {
         return new HashMap<>(params);
     }
 }

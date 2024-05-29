@@ -2,20 +2,20 @@ package dev.jwtly10.dynatest.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.jwtly10.dynatest.enums.Method;
-import dev.jwtly10.dynatest.models.*;
+import dev.jwtly10.dynatest.models.Request;
+import dev.jwtly10.dynatest.models.Response;
+import dev.jwtly10.dynatest.models.TestList;
+import dev.jwtly10.dynatest.models.TestRun;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class JsonParserTest {
-    // TODO: Refactor the expectedTestRun and expectedTestList generations
     @Test
-    void testCanParseTestModel() {
+    void testCanParseTestRunModelFromJson() throws JsonProcessingException {
         String json = """
                     {
                       "name": "Test Scenario Name",
@@ -33,13 +33,21 @@ class JsonParserTest {
                               "id": "{previousValue}"
                             },
                             "body": {
-                              "name": "test"
+                              "name": "test",
+                              "age": 10,
+                              "address": {
+                                  "city": "London",
+                                  "country": "UK"
+                              }
                             }
                           },
                           "response": {
                             "statusCode": 200,
                             "headers":{
                               "Content-Type": "application/json"
+                            },
+                            "body":{
+                                "message":"successful request"
                             },
                             "storeValues": {
                               "token": "responseBody.token",
@@ -51,48 +59,35 @@ class JsonParserTest {
                     }
                 """;
 
-        try {
-            TestRun actualTestRun = JsonParser.fromJson(json, TestRun.class);
+        TestRun actualTestRun = JsonParser.fromJson(json, TestRun.class);
 
-            TestRun expectedTestRun = TestRun.builder()
-                    .name("Test Scenario Name")
-                    .description("Description of what this test scenario does")
-                    .steps(Collections.singletonList(Step.builder().stepName("Unique Step Name")
-                            .request(Request.builder()
-                                    .method(Method.GET)
-                                    .url("https://api.example.com/resource")
-                                    .headers(new Headers(new HashMap<>() {{
-                                        put("Authorization", "Bearer {token}");
-                                    }}))
-                                    .queryParams(new QueryParams(new HashMap<>() {{
-                                        put("id", "{previousValue}");
-                                    }}))
-                                    .body(new Body(new HashMap<>() {{
-                                        put("name", "test");
-                                    }}))
-                                    .build())
-                            .response(Response.builder()
-                                    .statusCode(200)
-                                    .headers(new Headers(new HashMap<>() {{
-                                        put("Content-Type", "application/json");
-                                    }}))
-                                    .storeValues(new StoreValues(new HashMap<>() {{
-                                        put("token", "responseBody.token");
-                                        put("userId", "responseBody.user.id");
-                                    }}))
-                                    .build())
-                            .build()))
-                    .build();
+        assertEquals("Test Scenario Name", actualTestRun.getName());
+        assertEquals("Description of what this test scenario does", actualTestRun.getDescription());
+        assertEquals(1, actualTestRun.getSteps().size());
+        actualTestRun.getSteps().forEach(step -> {
+            assertEquals("Unique Step Name", step.getStepName());
 
-            assertEquals(expectedTestRun, actualTestRun);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            fail("Failed to parse TestRun Json");
-        }
+            Request request = step.getRequest();
+            assertEquals(Method.GET, request.getMethod());
+            assertEquals("https://api.example.com/resource", request.getUrl());
+            assertEquals("Bearer {token}", request.getHeader("Authorization"));
+            assertEquals("{previousValue}", request.getParam("id"));
+            assertEquals("test", request.getBody().get("name"));
+            assertEquals(10, request.getBody().get("age"));
+            assertEquals("London", request.getBody().get("address.city"));
+            assertEquals("UK", request.getBody().get("address.country"));
+
+            Response response = step.getResponse();
+            assertEquals(200, response.getStatusCode());
+            assertEquals("application/json", response.getHeader("Content-Type"));
+            assertEquals("successful request", response.getBody().get("message"));
+            assertEquals("responseBody.token", response.getStoredValues().get("token"));
+            assertEquals("responseBody.user.id", response.getStoredValues().get("userId"));
+        });
     }
 
     @Test
-    void testCanParseTestsModel() {
+    void testCanParseTestListModelFromJson() throws JsonProcessingException {
         String json = """
                 {
                   "tests": [
@@ -142,9 +137,6 @@ class JsonParserTest {
                             },
                             "queryParams": {
                               "id": "{previousValue}"
-                            },
-                            "body": {
-                              "key": "value"
                             }
                           },
                           "response": {
@@ -161,76 +153,71 @@ class JsonParserTest {
                 }
                 """;
 
-        try {
-            TestList actualTestList = JsonParser.fromJson(json, TestList.class);
+        TestList actualTestList = JsonParser.fromJson(json, TestList.class);
 
-            TestRun expectedTestRun1 = TestRun.builder()
-                    .name("Test Scenario Name 1")
-                    .description("Description of what this test scenario does")
-                    .steps(Collections.singletonList(Step.builder().stepName("Unique Step Name")
-                            .request(Request.builder()
-                                    .method(Method.GET)
-                                    .url("https://api.example.com/resource")
-                                    .headers(new Headers(new HashMap<>() {{
-                                        put("Content-Type", "application/json");
-                                    }}))
-                                    .queryParams(new QueryParams(new HashMap<>() {{
-                                        put("id", "{previousValue}");
-                                    }}))
-                                    .body(new Body(new HashMap<>() {{
-                                        put("age", "10");
-                                    }}))
-                                    .build())
-                            .response(Response.builder()
-                                    .statusCode(200)
-                                    .headers(new Headers(new HashMap<>() {{
-                                        put("Authorization", "Bearer {token}");
-                                    }}))
-                                    .storeValues(new StoreValues(new HashMap<>() {{
-                                        put("token", "responseBody.token");
-                                        put("userId", "responseBody.user.id");
-                                    }}))
-                                    .build())
-                            .build()))
-                    .build();
+        assertEquals(2, actualTestList.getTests().size());
+        assertEquals("Test Scenario Name 1", actualTestList.getTests().get(0).getName());
+        assertEquals("Description of what this test scenario does", actualTestList.getTests().get(0).getDescription());
+        assertEquals(1, actualTestList.getTests().get(0).getSteps().size());
+        assertEquals("Unique Step Name", actualTestList.getTests().get(0).getSteps().get(0).getStepName());
+        assertEquals(Method.GET, actualTestList.getTests().get(0).getSteps().get(0).getRequest().getMethod());
+        assertEquals("https://api.example.com/resource", actualTestList.getTests().get(0).getSteps().get(0).getRequest().getUrl());
+        assertEquals("application/json", actualTestList.getTests().get(0).getSteps().get(0).getRequest().getHeader("Content-Type"));
+        assertEquals("{previousValue}", actualTestList.getTests().get(0).getSteps().get(0).getRequest().getParam("id"));
+        assertEquals(10, actualTestList.getTests().get(0).getSteps().get(0).getRequest().getBody().get("age"));
+        assertEquals(200, actualTestList.getTests().get(0).getSteps().get(0).getResponse().getStatusCode());
+        assertEquals("Bearer {token}", actualTestList.getTests().get(0).getSteps().get(0).getResponse().getHeader("Authorization"));
+        assertEquals("responseBody.token", actualTestList.getTests().get(0).getSteps().get(0).getResponse().getStoredValues().get("token"));
+        assertEquals("responseBody.user.id", actualTestList.getTests().get(0).getSteps().get(0).getResponse().getStoredValues().get("userId"));
 
-            TestRun expectedTestRun2 = TestRun.builder()
-                    .name("Test Scenario Name 2")
-                    .description("Description of what this test scenario does")
-                    .steps(Collections.singletonList(Step.builder().stepName("Unique Step Name")
-                            .request(Request.builder()
-                                    .method(Method.GET)
-                                    .url("https://api.example.com/resource")
-                                    .headers(new Headers(new HashMap<>() {{
-                                        put("Authorization", "Bearer {token}");
-                                    }}))
-                                    .queryParams(new QueryParams(new HashMap<>() {{
-                                        put("id", "{previousValue}");
-                                    }}))
-                                    .body(new Body(new HashMap<>() {{
-                                        put("key", "value");
-                                    }}))
-                                    .build())
-                            .response(Response.builder()
-                                    .statusCode(200)
-                                    .storeValues(new StoreValues(new HashMap<>() {{
-                                        put("token", "responseBody.token");
-                                        put("userId", "responseBody.user.id");
-                                    }}))
-                                    .build())
-                            .build()))
-                    .build();
+        assertEquals("Test Scenario Name 2", actualTestList.getTests().get(1).getName());
+        assertEquals("Description of what this test scenario does", actualTestList.getTests().get(1).getDescription());
+        assertEquals("Unique Step Name", actualTestList.getTests().get(1).getSteps().get(0).getStepName());
+        assertEquals(Method.GET, actualTestList.getTests().get(1).getSteps().get(0).getRequest().getMethod());
+        assertEquals("https://api.example.com/resource", actualTestList.getTests().get(1).getSteps().get(0).getRequest().getUrl());
+        assertEquals("Bearer {token}", actualTestList.getTests().get(1).getSteps().get(0).getRequest().getHeader("Authorization"));
+        assertEquals("{previousValue}", actualTestList.getTests().get(1).getSteps().get(0).getRequest().getParam("id"));
+        assertEquals(new HashMap<>(), actualTestList.getTests().get(1).getSteps().get(0).getRequest().getBody());
+        assertEquals(200, actualTestList.getTests().get(1).getSteps().get(0).getResponse().getStatusCode());
+        assertEquals(new HashMap<>(), actualTestList.getTests().get(1).getSteps().get(0).getResponse().getHeaders());
+        assertEquals("responseBody.token", actualTestList.getTests().get(1).getSteps().get(0).getResponse().getStoredValues().get("token"));
+        assertEquals("responseBody.user.id", actualTestList.getTests().get(1).getSteps().get(0).getResponse().getStoredValues().get("userId"));
+    }
 
-            TestList expectedTestList = TestList.builder()
-                    .tests(Arrays.asList(expectedTestRun1, expectedTestRun2))
-                    .build();
+    @Test
+    void testCanHandleMissingValues() throws JsonProcessingException {
+        String json = """
+                    {
+                      "name": "Test Scenario Name",
+                      "description": "Description of what this test scenario does",
+                      "steps": [
+                        {
+                          "stepName": "Unique Step Name",
+                          "request": {
+                            "method": "GET",
+                            "url": "https://api.example.com/resource",
+                            "headers": {
+                              "Authorization": "Bearer {token}"
+                            },
+                            "queryParams": {
+                              "id": "{previousValue}"
+                            },
+                            "body": {
+                              "name": "test",
+                              "age": 10,
+                              "address": {
+                                  "city": "London",
+                                  "country": "UK"
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                """;
 
-            assertEquals(expectedTestList, actualTestList);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            fail("Failed to parse TestList");
-        }
+        TestRun actualTestRun = JsonParser.fromJson(json, TestRun.class);
 
-
+        assertNull(actualTestRun.getSteps().get(0).getResponse());
     }
 }

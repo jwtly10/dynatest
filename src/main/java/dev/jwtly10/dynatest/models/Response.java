@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
@@ -12,6 +13,7 @@ import java.util.Map;
 public class Response {
     private int statusCode;
     private Headers headers;
+    private Body body;
     private StoreValues storeValues;
 
     public String getHeader(String key) {
@@ -22,7 +24,10 @@ public class Response {
         headers.setHeader(key, value);
     }
 
-    public Map<String, String> getAllHeaders() {
+    public Map<String, String> getHeaders() {
+        if (headers == null) {
+            return new HashMap<>();
+        }
         return headers.getHeaders();
     }
 
@@ -34,7 +39,17 @@ public class Response {
         storeValues.setValue(key, value);
     }
 
-    public Map<String, String> getAllStoredValues() {
+    public Map<String, String> getStoredValues() {
+        if (storeValues == null) {
+            return new HashMap<>();
+        }
         return storeValues.getValues();
+    }
+
+    public Map<String, Object> getBody() {
+        if (body == null) {
+            return new HashMap<>();
+        }
+        return body.getData();
     }
 }
