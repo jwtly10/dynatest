@@ -1,12 +1,12 @@
 package dev.jwtly10.dynatest.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import dev.jwtly10.dynatest.enums.Method;
 import dev.jwtly10.dynatest.models.Request;
 import dev.jwtly10.dynatest.models.Response;
 import dev.jwtly10.dynatest.models.TestList;
 import dev.jwtly10.dynatest.models.TestRun;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpMethod;
 
 import java.util.HashMap;
 
@@ -68,7 +68,7 @@ class JsonParserTest {
             assertEquals("Unique Step Name", step.getStepName());
 
             Request request = step.getRequest();
-            assertEquals(Method.GET, request.getMethod());
+            assertEquals(HttpMethod.GET, request.getMethod());
             assertEquals("https://api.example.com/resource", request.getUrl());
             assertEquals("Bearer {token}", request.getHeader("Authorization"));
             assertEquals("{previousValue}", request.getParam("id"));
@@ -81,8 +81,8 @@ class JsonParserTest {
             assertEquals(200, response.getStatusCode());
             assertEquals("application/json", response.getHeader("Content-Type"));
             assertEquals("successful request", response.getBody().get("message"));
-            assertEquals("responseBody.token", response.getStoredValues().get("token"));
-            assertEquals("responseBody.user.id", response.getStoredValues().get("userId"));
+            assertEquals("responseBody.token", response.getStoredValue("token"));
+            assertEquals("responseBody.user.id", response.getStoredValue("userId"));
         });
     }
 
@@ -160,7 +160,7 @@ class JsonParserTest {
         assertEquals("Description of what this test scenario does", actualTestList.getTests().get(0).getDescription());
         assertEquals(1, actualTestList.getTests().get(0).getSteps().size());
         assertEquals("Unique Step Name", actualTestList.getTests().get(0).getSteps().get(0).getStepName());
-        assertEquals(Method.GET, actualTestList.getTests().get(0).getSteps().get(0).getRequest().getMethod());
+        assertEquals(HttpMethod.GET, actualTestList.getTests().get(0).getSteps().get(0).getRequest().getMethod());
         assertEquals("https://api.example.com/resource", actualTestList.getTests().get(0).getSteps().get(0).getRequest().getUrl());
         assertEquals("application/json", actualTestList.getTests().get(0).getSteps().get(0).getRequest().getHeader("Content-Type"));
         assertEquals("{previousValue}", actualTestList.getTests().get(0).getSteps().get(0).getRequest().getParam("id"));
@@ -173,7 +173,7 @@ class JsonParserTest {
         assertEquals("Test Scenario Name 2", actualTestList.getTests().get(1).getName());
         assertEquals("Description of what this test scenario does", actualTestList.getTests().get(1).getDescription());
         assertEquals("Unique Step Name", actualTestList.getTests().get(1).getSteps().get(0).getStepName());
-        assertEquals(Method.GET, actualTestList.getTests().get(1).getSteps().get(0).getRequest().getMethod());
+        assertEquals(HttpMethod.GET, actualTestList.getTests().get(1).getSteps().get(0).getRequest().getMethod());
         assertEquals("https://api.example.com/resource", actualTestList.getTests().get(1).getSteps().get(0).getRequest().getUrl());
         assertEquals("Bearer {token}", actualTestList.getTests().get(1).getSteps().get(0).getRequest().getHeader("Authorization"));
         assertEquals("{previousValue}", actualTestList.getTests().get(1).getSteps().get(0).getRequest().getParam("id"));
