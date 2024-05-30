@@ -35,7 +35,7 @@ public class TestExecutor {
             try {
                 log.info("Running step '{}'", step.getStepName());
                 Response res = doStep(step, templateParser);
-                log.info(res.toString());
+                log.debug("Response from request: {}", res);
                 // Here is where we do validation on the stuff we expected in the step
             } catch (Exception e) {
                 log.error("Error executing step '{}'", step.getStepName(), e);

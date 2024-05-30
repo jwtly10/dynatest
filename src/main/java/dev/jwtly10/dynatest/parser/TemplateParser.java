@@ -61,7 +61,7 @@ public class TemplateParser {
         Map<String, String> vals = storeValues.getValues();
 
         for (Map.Entry<String, String> entry : vals.entrySet()) {
-            log.info("Resolving stored value'{}'", entry.getValue());
+            log.info("Resolving stored value '{}'", entry.getValue());
             String[] params = entry.getValue().split("\\.", 2);
             for (int i = 0; i < params.length; i++) {
                 params[i] = params[i].trim();
@@ -120,6 +120,7 @@ public class TemplateParser {
     }
 
     private String parseAndReplace(String template) throws Exception {
+        log.info("Parsing template: {}", template);
         StringBuffer sb = new StringBuffer(template);
         int openBrace, closeBrace, nestedOpen, currentPos = 0;
 
