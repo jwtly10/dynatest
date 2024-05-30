@@ -2,6 +2,7 @@ package dev.jwtly10.dynatest.parser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.jwtly10.dynatest.context.TestContext;
+import dev.jwtly10.dynatest.exceptions.TemplateParserException;
 import dev.jwtly10.dynatest.models.*;
 import dev.jwtly10.dynatest.util.FunctionHandler;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TemplateParserTest {
     @Test
-    public void testCanStoreResponseVariable() throws RuntimeException {
+    public void testCanStoreResponseVariable() throws RuntimeException, TemplateParserException {
         JsonBody body = new JsonBody();
         body.setBodyData(Map.of(
                 "user_id", "3",
@@ -183,7 +184,7 @@ public class TemplateParserTest {
         // Missing value
         // context.setVariable("userId", "1");
 
-        assertThrows(RuntimeException.class, () -> templateParser.parseRequest(req));
+        assertThrows(TemplateParserException.class, () -> templateParser.parseRequest(req));
     }
 
     @Test
@@ -209,6 +210,35 @@ public class TemplateParserTest {
 
         context.setVariable("token", "test_token");
 
-        assertThrows(NoSuchMethodException.class, () -> templateParser.parseRequest(req));
+        assertThrows(TemplateParserException.class, () -> templateParser.parseRequest(req));
     }
+
+    @Test
+    public void testThrowsWhenTemplateCreatesInvalidJson() throws JsonProcessingException {
+        String json = """
+                {
+                    "method": "POST",
+                    "url": "https://api.one/create",
+                    "headers": {
+                      "Authorization": "Bearer ${token}"
+                    },
+                    "body": {
+                      "emptyEmail": "${invalidString}"
+                    }
+                }
+                """;
+
+        Request req = JsonParser.fromJson(json, Request.class);
+
+        TestContext context = new TestContext();
+        context.setVariable("invalidString", "\"invalid}}}},}");
+        FunctionHandler handler = new FunctionHandler();
+        TemplateParser templateParser = new TemplateParser(context, handler);
+
+        context.setVariable("token", "test_token");
+
+        assertThrows(TemplateParserException.class, () -> templateParser.parseRequest(req));
+    }
+
+
 }

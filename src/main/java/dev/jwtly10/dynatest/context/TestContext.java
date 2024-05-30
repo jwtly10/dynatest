@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Data
 public class TestContext {
@@ -27,7 +28,7 @@ public class TestContext {
         String val = variables.getOrDefault(key, envVariables.get(key));
 
         if (val == null) {
-            throw new RuntimeException("No value in context for key: " + key);
+            throw new NoSuchElementException("No value in context for key: '" + key + "'");
         }
 
         return val;
