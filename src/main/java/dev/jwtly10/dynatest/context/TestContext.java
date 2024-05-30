@@ -1,12 +1,10 @@
 package dev.jwtly10.dynatest.context;
 
 import lombok.Data;
-import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Service
 @Data
 public class TestContext {
     private Map<String, String> variables = new HashMap<>();

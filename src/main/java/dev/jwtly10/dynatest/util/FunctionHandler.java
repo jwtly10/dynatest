@@ -1,11 +1,11 @@
 package dev.jwtly10.dynatest.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 
-@Service
+@Component
 @Slf4j
 public class FunctionHandler {
     public boolean isFunctionCall(String expression) {

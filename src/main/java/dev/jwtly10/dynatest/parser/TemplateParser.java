@@ -5,11 +5,9 @@ import dev.jwtly10.dynatest.context.TestContext;
 import dev.jwtly10.dynatest.models.*;
 import dev.jwtly10.dynatest.util.FunctionHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-@Service
 @Slf4j
 public class TemplateParser {
     // Parse the request using the template parser and
@@ -18,7 +16,6 @@ public class TemplateParser {
     // - run any functions
 
     private final TestContext context;
-
     private final FunctionHandler functionHandler;
 
     public TemplateParser(TestContext context, FunctionHandler functionHandler) {
@@ -54,12 +51,17 @@ public class TemplateParser {
         // For now we only support the response body, but this is built in a way it can be extended
         // Just need to add a parser for the field
 
-        // Note also, arrays are not supported as target objs
+        // Note also, arrays are not supported as target storeValue objects
+
+        // If no stored values just leave
+        if (storeValues == null) {
+            return;
+        }
 
         Map<String, String> vals = storeValues.getValues();
 
         for (Map.Entry<String, String> entry : vals.entrySet()) {
-            log.info("Resolving '{}'", entry.getValue());
+            log.info("Resolving stored value'{}'", entry.getValue());
             String[] params = entry.getValue().split("\\.", 2);
             for (int i = 0; i < params.length; i++) {
                 params[i] = params[i].trim();
