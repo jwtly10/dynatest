@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Async JSON Test Runner</title>
+    <link href="css/style.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            $('#runButton').click(function () {
+                var jsonData = $('#jsonData').val();
+                $('#loading').show(); // Show the loading icon
+                $('#results').empty(); // Clear previous results
+                $.ajax({
+                    url: '/runtest',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({jsonData: jsonData}),
+                    dataType: 'json',  // Ensure the response is treated as JSON
+                    success: function (data) {
+                        $('#results').text(data.message);  // Access the 'message' field of the JSON object
+                        $('#loading').hide(); // Hide the loading icon
+                    },
+                    error: function (xhr, status, error) {
+                        $('#results').text('Error: ' + error);
+                        $('#loading').hide();
+                    }
+                });
+            });
+        });
+    </script>
+
+</head>
+<body>
+<div class="container">
+    <h1>Enter your JSON</h1>
+    <textarea cols="50" id="jsonData" placeholder="Enter JSON here..." rows="10"></textarea>
+    <button id="runButton">Run Test</button>
+    <img id="loading" src="loading.gif" style="display:none;"/>
+    <div id="results">Umm hellow</div>
+</div>
+</body>
+</html>
