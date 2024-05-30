@@ -2,13 +2,44 @@ package dev.jwtly10.dynatest.parser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.jwtly10.dynatest.context.TestContext;
-import dev.jwtly10.dynatest.models.Request;
+import dev.jwtly10.dynatest.models.*;
 import dev.jwtly10.dynatest.util.FunctionHandler;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TemplateParserTest {
+    @Test
+    public void testCanStoreResponseVariable() throws RuntimeException {
+        JsonBody body = new JsonBody();
+        body.setBodyData(Map.of(
+                "user_id", "3",
+                "age", "25",
+                "address.city", "london"
+        ));
+        Response res = Response.builder()
+                .headers(new Headers(Map.of()))
+                .jsonBody(body)
+                .build();
+
+        StoreValues vals = new StoreValues();
+        vals.setValues(Map.of(
+                "id", "body.user_id",
+                "city", "body.address.city"
+        ));
+
+        TestContext context = new TestContext();
+        FunctionHandler handler = new FunctionHandler();
+        TemplateParser templateParser = new TemplateParser(context, handler);
+
+        templateParser.setStoredValues(res, vals);
+
+        assertEquals("3", context.getValue("id"));
+        assertEquals("london", context.getValue("city"));
+    }
+
     @Test
     public void testCanParseVariablesInRequest() throws Exception {
         String json = """

@@ -7,6 +7,8 @@ import dev.jwtly10.dynatest.util.FunctionHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 @Slf4j
 public class TemplateParser {
@@ -48,8 +50,40 @@ public class TemplateParser {
 
     }
 
-    public void setStoredValues(Response response, StoreValues storeValues) {
-        // TODO: Parse the reponse and set the context
+    public void setStoredValues(Response response, StoreValues storeValues) throws RuntimeException {
+        // For now we only support the response body, but this is built in a way it can be extended
+        // Just need to add a parser for the field
+
+        // Note also, arrays are not supported as target objs
+
+        Map<String, String> vals = storeValues.getValues();
+
+        for (Map.Entry<String, String> entry : vals.entrySet()) {
+            log.info("Resolving '{}'", entry.getValue());
+            String[] params = entry.getValue().split("\\.", 2);
+            for (int i = 0; i < params.length; i++) {
+                params[i] = params[i].trim();
+            }
+
+            switch (params[0]) {
+                case ("body"):
+                    Map<String, Object> body = response.getJsonBody();
+
+                    // TODO: Better way to do this? It should be 'safe' but wont be best UX
+                    String val = body.get(params[1]).toString();
+                    log.debug("Found '{}'", val);
+
+                    if (val != null) {
+                        context.setVariable(entry.getKey(), val);
+                    } else {
+                        throw new RuntimeException("Cannot find field '" + params[1] + "' in '" + params[0] + "'");
+                    }
+
+                    break;
+                default:
+                    log.error("No values to parse");
+            }
+        }
     }
 
     private Headers parseHeaders(Headers headers) {
@@ -109,10 +143,10 @@ public class TemplateParser {
                     args[i] = parseAndReplace(args[i]);
                 }
 
-                log.info("Resolving function: {}", functionName);
+                log.info("Resolving function: '{}'", functionName);
                 replacement = functionHandler.callFunction(functionName, args);
             } else {
-                log.info("Resolving variable: {}", key);
+                log.info("Resolving variable: '{}'", key);
                 replacement = context.getValue(key);
             }
 
