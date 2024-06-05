@@ -70,7 +70,7 @@ class JsonParserTest {
     }
 
     @Test
-    void testCanParseTestListModelFromJson() throws JsonProcessingException {
+    void testCanParseTestSuiteModelFromJson() throws JsonProcessingException {
         String json = """
                 {
                   "tests": [

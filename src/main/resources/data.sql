@@ -1,0 +1,5 @@
+INSERT INTO test_suite_tb (name, configuration, created_at, updated_at)
+VALUES ('Test Suite Name',
+        '"{\"tests\":[{\"name\":\"Test Scenario Name 1\",\"description\":\"Description of what this test scenario does\",\"steps\":[{\"stepName\":\"Unique Step Name\",\"request\":{\"method\":\"GET\",\"url\":\"https://api.example.com/resource\",\"headers\":{\"Content-Type\":\"application/json\"},\"queryParams\":{\"id\":\"{previousValue}\"},\"body\":{\"age\":10},\"storeValues\":{\"token\":\"responseBody.token\",\"userId\":\"responseBody.user.id\"}}}]},{\"name\":\"Test Scenario Name 2\",\"description\":\"Description of what this test scenario does\",\"steps\":[{\"stepName\":\"Unique Step Name\",\"request\":{\"method\":\"GET\",\"url\":\"https://api.example.com/resource\",\"headers\":{\"Authorization\":\"Bearer {token}\"},\"queryParams\":{\"id\":\"{previousValue}\"},\"storeValues\":{\"token\":\"responseBody.token\",\"userId\":\"responseBody.user.id\"}}}]}]}"',
+        datetime('now'),
+        datetime('now'));

@@ -7,10 +7,13 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Table(name = "test_suite_tb")
 public class TestSuiteEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+
+    private String name;
 
     @Lob
     private String configuration;

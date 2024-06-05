@@ -1,5 +1,6 @@
 package dev.jwtly10.dynatest.controller;
 
+import dev.jwtly10.dynatest.dta.TestSuiteRequestBody;
 import dev.jwtly10.dynatest.models.TestSuiteEntity;
 import dev.jwtly10.dynatest.services.TestSuiteService;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +19,8 @@ public class TestSuiteController {
     }
 
     @PostMapping("/new")
-    public TestSuiteEntity saveTestSuite(@RequestBody String testSuiteJson) {
-        return testSuiteService.saveTestSuite(testSuiteJson);
+    public TestSuiteEntity saveTestSuite(@RequestBody TestSuiteRequestBody req) {
+        return testSuiteService.saveTestSuite(req.getName(), req.getConfiguration());
     }
 
     @GetMapping
@@ -33,7 +34,7 @@ public class TestSuiteController {
     }
 
     @PutMapping("/{id}")
-    public TestSuiteEntity updateTestSuite(@PathVariable int id, @RequestBody String testSuiteJson) {
-        return testSuiteService.updateTestSuite(id, testSuiteJson);
+    public TestSuiteEntity updateTestSuite(@PathVariable int id, @RequestBody TestSuiteRequestBody req) {
+        return testSuiteService.updateTestSuite(id, req.getName(), req.getConfiguration());
     }
 }
