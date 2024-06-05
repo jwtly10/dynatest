@@ -9,6 +9,6 @@ import java.util.List;
 @Data
 @Builder
 @Jacksonized
-public class TestList {
+public class TestSuite {
     private List<TestRun> tests;
 }

@@ -2,8 +2,8 @@ package dev.jwtly10.dynatest.parser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.jwtly10.dynatest.models.Request;
-import dev.jwtly10.dynatest.models.TestList;
 import dev.jwtly10.dynatest.models.TestRun;
+import dev.jwtly10.dynatest.models.TestSuite;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 
@@ -127,27 +127,27 @@ class JsonParserTest {
                 }
                 """;
 
-        TestList actualTestList = JsonParser.fromJson(json, TestList.class);
+        TestSuite actualTestSuite = JsonParser.fromJson(json, TestSuite.class);
 
-        assertEquals(2, actualTestList.getTests().size());
-        assertEquals("Test Scenario Name 1", actualTestList.getTests().get(0).getName());
-        assertEquals("Description of what this test scenario does", actualTestList.getTests().get(0).getDescription());
-        assertEquals(1, actualTestList.getTests().get(0).getSteps().size());
-        assertEquals("Unique Step Name", actualTestList.getTests().get(0).getSteps().get(0).getStepName());
-        assertEquals(HttpMethod.GET, actualTestList.getTests().get(0).getSteps().get(0).getRequest().getMethod());
-        assertEquals("https://api.example.com/resource", actualTestList.getTests().get(0).getSteps().get(0).getRequest().getUrl());
-        assertEquals("application/json", actualTestList.getTests().get(0).getSteps().get(0).getRequest().getHeader("Content-Type"));
-        assertEquals("{previousValue}", actualTestList.getTests().get(0).getSteps().get(0).getRequest().getParam("id"));
-        assertEquals(10, actualTestList.getTests().get(0).getSteps().get(0).getRequest().getJsonBody().get("age"));
+        assertEquals(2, actualTestSuite.getTests().size());
+        assertEquals("Test Scenario Name 1", actualTestSuite.getTests().get(0).getName());
+        assertEquals("Description of what this test scenario does", actualTestSuite.getTests().get(0).getDescription());
+        assertEquals(1, actualTestSuite.getTests().get(0).getSteps().size());
+        assertEquals("Unique Step Name", actualTestSuite.getTests().get(0).getSteps().get(0).getStepName());
+        assertEquals(HttpMethod.GET, actualTestSuite.getTests().get(0).getSteps().get(0).getRequest().getMethod());
+        assertEquals("https://api.example.com/resource", actualTestSuite.getTests().get(0).getSteps().get(0).getRequest().getUrl());
+        assertEquals("application/json", actualTestSuite.getTests().get(0).getSteps().get(0).getRequest().getHeader("Content-Type"));
+        assertEquals("{previousValue}", actualTestSuite.getTests().get(0).getSteps().get(0).getRequest().getParam("id"));
+        assertEquals(10, actualTestSuite.getTests().get(0).getSteps().get(0).getRequest().getJsonBody().get("age"));
 
-        assertEquals("Test Scenario Name 2", actualTestList.getTests().get(1).getName());
-        assertEquals("Description of what this test scenario does", actualTestList.getTests().get(1).getDescription());
-        assertEquals("Unique Step Name", actualTestList.getTests().get(1).getSteps().get(0).getStepName());
-        assertEquals(HttpMethod.GET, actualTestList.getTests().get(1).getSteps().get(0).getRequest().getMethod());
-        assertEquals("https://api.example.com/resource", actualTestList.getTests().get(1).getSteps().get(0).getRequest().getUrl());
-        assertEquals("Bearer {token}", actualTestList.getTests().get(1).getSteps().get(0).getRequest().getHeader("Authorization"));
-        assertEquals("{previousValue}", actualTestList.getTests().get(1).getSteps().get(0).getRequest().getParam("id"));
-        assertEquals(new HashMap<>(), actualTestList.getTests().get(1).getSteps().get(0).getRequest().getJsonBody());
+        assertEquals("Test Scenario Name 2", actualTestSuite.getTests().get(1).getName());
+        assertEquals("Description of what this test scenario does", actualTestSuite.getTests().get(1).getDescription());
+        assertEquals("Unique Step Name", actualTestSuite.getTests().get(1).getSteps().get(0).getStepName());
+        assertEquals(HttpMethod.GET, actualTestSuite.getTests().get(1).getSteps().get(0).getRequest().getMethod());
+        assertEquals("https://api.example.com/resource", actualTestSuite.getTests().get(1).getSteps().get(0).getRequest().getUrl());
+        assertEquals("Bearer {token}", actualTestSuite.getTests().get(1).getSteps().get(0).getRequest().getHeader("Authorization"));
+        assertEquals("{previousValue}", actualTestSuite.getTests().get(1).getSteps().get(0).getRequest().getParam("id"));
+        assertEquals(new HashMap<>(), actualTestSuite.getTests().get(1).getSteps().get(0).getRequest().getJsonBody());
     }
 
     @Test
