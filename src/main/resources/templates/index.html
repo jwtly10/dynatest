@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Async JSON Test Runner</title>
@@ -34,10 +34,15 @@
 <body>
 <div class="container">
     <h1>Enter your JSON</h1>
+    <label for="jsonData">Json Data</label>
     <textarea cols="50" id="jsonData" placeholder="Enter JSON here..." rows="10"></textarea>
-    <button id="runButton">Run Test</button>
-    <img id="loading" src="loading.gif" style="display:none;"/>
-    <div id="results">Umm hellow</div>
+    <div class="holder">
+        <button id="runButton" style="margin-right:1rem;">Run Test</button>
+        <div id="loading" style="display:none;">
+            <div class="loader"></div>
+        </div>
+    </div>
+    <div id="results"></div>
 </div>
 </body>
 </html>
