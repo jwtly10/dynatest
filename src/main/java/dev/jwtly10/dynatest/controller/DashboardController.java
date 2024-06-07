@@ -19,7 +19,7 @@ public class DashboardController {
 
     @GetMapping("/")
     public String dashboard(Model model) {
-        List<TestSuiteEntity> testSuites = testSuiteService.getAllTestSuites();
+        List<TestSuiteEntity> testSuites = testSuiteService.getAllActiveTestSuites();
         model.addAttribute("testSuites", testSuites);
         return "dashboard";
     }

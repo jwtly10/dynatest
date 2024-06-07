@@ -30,7 +30,7 @@ public class TestSuiteController {
 
     @GetMapping
     public List<TestSuiteEntity> getAllTestSuites() {
-        return testSuiteService.getAllTestSuites();
+        return testSuiteService.getAllActiveTestSuites();
     }
 
     @GetMapping("/{id}")
