@@ -183,4 +183,49 @@ class JsonParserTest {
 
         assertNull(actualTestRun.getSteps().get(0).getRequest().getRequestHeaders());
     }
+
+    @Test
+    void testCanHandleArraysInBody() throws JsonProcessingException {
+        String json = """
+                    {
+                      "name": "Test Scenario Name",
+                      "description": "Description of what this test scenario does",
+                      "steps": [
+                        {
+                          "stepName": "Unique Step Name",
+                          "request": {
+                            "method": "GET",
+                            "url": "https://api.example.com/resource",
+                            "queryParams": {
+                              "id": "{previousValue}"
+                            },
+                            "body": {
+                                "address":{
+                                    "city": "London",
+                                    "country": "UK"
+                                },
+                              "names": [
+                                {"name1": "Josh"},
+                                {
+                                    "name2": "NewName",
+                                    "address":{
+                                        "city": "London",
+                                        "country": "UK"
+                                    }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    }
+                """;
+
+        TestRun actualTestRun = JsonParser.fromJson(json, TestRun.class);
+        System.out.println(actualTestRun.getSteps().get(0).getRequest().getBody());
+        System.out.println(actualTestRun.getSteps().get(0).getRequest().getJsonBody());
+        System.out.println(actualTestRun.getSteps().get(0).getRequest().getJsonBody().get("address.city"));
+        System.out.println(actualTestRun.getSteps().get(0).getRequest().getJsonBody().get("names"));
+        // TODO: We dont handle json arrays very well. This is something I will need to implement
+    }
 }

@@ -2,21 +2,17 @@ package dev.jwtly10.dynatest.parser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.jwtly10.dynatest.context.TestContext;
+import dev.jwtly10.dynatest.exceptions.TemplateParserException;
 import dev.jwtly10.dynatest.models.*;
 import dev.jwtly10.dynatest.util.FunctionHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
-@Service
+import java.util.Map;
+import java.util.NoSuchElementException;
+
 @Slf4j
 public class TemplateParser {
-    // Parse the request using the template parser and
-    // - set any environment vars,
-    // - set any variables from the context
-    // - run any functions
-
     private final TestContext context;
-
     private final FunctionHandler functionHandler;
 
     public TemplateParser(TestContext context, FunctionHandler functionHandler) {
@@ -24,66 +20,100 @@ public class TemplateParser {
         this.functionHandler = functionHandler;
     }
 
-    public Request parseRequest(Request request) throws Exception {
-        try {
-            request.setUrl(parseAndReplace(request.getUrl()));
-            if (request.getQueryParams() != null) {
-                request.setQueryParams(parseQueryParams(request.getQueryParams()));
-            }
-            if (request.getRequestHeaders() != null) {
-                request.setRequestHeaders(parseHeaders(request.getRequestHeaders()));
-            }
-            if (request.getBody() != null) {
-                try {
-                    request.setJsonBody(parseJsonBody(request.getBody()));
-                } catch (JsonProcessingException e) {
-                    log.error("Error parsing json body", e);
-                }
-            }
-            return request;
-        } catch (Exception e) {
-            log.error("Error parsing request due to: {}", e.getMessage());
-            throw e;
+    public Request parseRequest(Request request) throws TemplateParserException {
+        request.setUrl(parseUrl(request.getUrl()));
+        if (request.getQueryParams() != null) {
+            request.setQueryParams(parseQueryParams(request.getQueryParams()));
+        }
+        if (request.getRequestHeaders() != null) {
+            request.setRequestHeaders(parseHeaders(request.getRequestHeaders()));
+        }
+        if (request.getBody() != null) {
+            request.setJsonBody(parseJsonBody(request.getBody()));
+        }
+        return request;
+    }
+
+    public void setStoredValues(Response response, StoreValues storeValues) throws TemplateParserException {
+        // For now we only support the response body, but this is built in a way it can be extended
+        // Just need to add a parser for the field
+
+        // Note also, arrays are not supported as target storeValue objects
+
+        // If no stored values just leave
+        if (storeValues == null) {
+            return;
         }
 
-    }
+        Map<String, String> vals = storeValues.getValues();
 
-    public void setStoredValues(Response response, StoreValues storeValues) {
-        // TODO: Parse the reponse and set the context
-    }
-
-    private Headers parseHeaders(Headers headers) {
-        headers.getHeaders().forEach((key, value) -> {
-            try {
-                headers.setHeader(key, parseAndReplace(value));
-            } catch (Exception e) {
-                log.error("Error parsing headers: {}", e.getMessage());
-                // TODO: impl error context to handle this
+        for (Map.Entry<String, String> entry : vals.entrySet()) {
+            log.info("Resolving stored value '{}'", entry.getValue());
+            String[] params = entry.getValue().split("\\.", 2);
+            for (int i = 0; i < params.length; i++) {
+                params[i] = params[i].trim();
             }
-        });
+
+            switch (params[0]) {
+                case ("body"):
+                    Map<String, Object> body = response.getJsonBody();
+
+                    // TODO: Better way to do this? It should be 'safe' but wont be best UX
+                    String val = body.get(params[1]).toString();
+                    log.debug("Found '{}'", val);
+
+                    if (val != null) {
+                        context.setVariable(entry.getKey(), val);
+                    } else {
+                        throw new RuntimeException("Cannot find field '" + params[1] + "' in '" + params[0] + "'");
+                    }
+
+                    break;
+                default:
+                    throw new TemplateParserException("Invalid response access");
+            }
+        }
+    }
+
+    private String parseUrl(String url) throws TemplateParserException {
+        return parseAndReplace(url);
+    }
+
+    private Headers parseHeaders(Headers headers) throws TemplateParserException {
+        Map<String, String> originalHeaders = headers.getHeaders();
+        for (Map.Entry<String, String> entry : originalHeaders.entrySet()) {
+            headers.setHeader(entry.getKey(), parseAndReplace(entry.getValue()));
+        }
         return headers;
     }
 
-    private QueryParams parseQueryParams(QueryParams queryParams) {
-        queryParams.getParams().forEach((key, value) -> {
-            try {
-                queryParams.setParam(key, parseAndReplace(value));
-            } catch (Exception e) {
-                log.error("Error parsing query params: {}", e.getMessage());
-            }
-        });
+    private QueryParams parseQueryParams(QueryParams queryParams) throws TemplateParserException {
+        Map<String, String> originalParams = queryParams.getParams();
+        for (Map.Entry<String, String> entry : originalParams.entrySet()) {
+            queryParams.setParam(entry.getKey(), parseAndReplace(entry.getValue()));
+        }
         return queryParams;
     }
 
-    private JsonBody parseJsonBody(JsonBody jsonBody) throws Exception {
-        String jsonBodyInString = JsonParser.toJson(jsonBody);
+    private JsonBody parseJsonBody(JsonBody jsonBody) throws TemplateParserException {
+        String jsonBodyInString = "";
+        try {
+            jsonBodyInString = JsonParser.toJson(jsonBody);
+        } catch (JsonProcessingException e) {
+            throw new TemplateParserException("Unable to parse request JSON: " + e.getMessage());
+        }
         log.debug("JsonBody was parsed into string: {}", jsonBodyInString);
         String replacedJson = parseAndReplace(jsonBodyInString);
         log.debug("JSON of JsonBody was templated into: {}", replacedJson);
-        return JsonParser.fromJson(replacedJson, JsonBody.class);
+        try {
+            return JsonParser.fromJson(replacedJson, JsonBody.class);
+        } catch (JsonProcessingException e) {
+            throw new TemplateParserException("Unable to parse request JSON after templating: " + e.getMessage());
+        }
     }
 
-    private String parseAndReplace(String template) throws Exception {
+    private String parseAndReplace(String template) throws TemplateParserException {
+        log.info("Parsing template: {}", template);
         StringBuffer sb = new StringBuffer(template);
         int openBrace, closeBrace, nestedOpen, currentPos = 0;
 
@@ -97,7 +127,8 @@ public class TemplateParser {
             }
 
             String key = sb.substring(openBrace + 2, closeBrace);
-            String replacement;
+            // TODO: Check this is fine, basically if we fail to parse we just reset to the template str
+            String replacement = "${" + key + "}";
 
             if (functionHandler.isFunctionCall(key)) {
                 String functionName = key.substring(0, key.indexOf('('));
@@ -109,11 +140,19 @@ public class TemplateParser {
                     args[i] = parseAndReplace(args[i]);
                 }
 
-                log.info("Resolving function: {}", functionName);
-                replacement = functionHandler.callFunction(functionName, args);
+                log.info("Resolving function: '{}'", functionName);
+                try {
+                    replacement = functionHandler.callFunction(functionName, args);
+                } catch (Exception e) {
+                    throw new TemplateParserException("Unable to invoke function '" + functionName + "'", e);
+                }
             } else {
-                log.info("Resolving variable: {}", key);
-                replacement = context.getValue(key);
+                log.info("Resolving variable: '{}'", key);
+                try {
+                    replacement = context.getValue(key);
+                } catch (NoSuchElementException e) {
+                    throw new TemplateParserException("'" + key + "', doesn't exist in the test context");
+                }
             }
 
             sb.replace(openBrace, closeBrace + 1, replacement);

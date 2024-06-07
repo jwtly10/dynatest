@@ -1,12 +1,11 @@
 package dev.jwtly10.dynatest.context;
 
 import lombok.Data;
-import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
-@Service
 @Data
 public class TestContext {
     private Map<String, String> variables = new HashMap<>();
@@ -29,7 +28,7 @@ public class TestContext {
         String val = variables.getOrDefault(key, envVariables.get(key));
 
         if (val == null) {
-            throw new RuntimeException("No value in context for key: " + key);
+            throw new NoSuchElementException("No value in context for key: '" + key + "'");
         }
 
         return val;

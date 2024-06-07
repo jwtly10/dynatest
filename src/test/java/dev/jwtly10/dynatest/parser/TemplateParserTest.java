@@ -2,13 +2,45 @@ package dev.jwtly10.dynatest.parser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.jwtly10.dynatest.context.TestContext;
-import dev.jwtly10.dynatest.models.Request;
+import dev.jwtly10.dynatest.exceptions.TemplateParserException;
+import dev.jwtly10.dynatest.models.*;
 import dev.jwtly10.dynatest.util.FunctionHandler;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TemplateParserTest {
+    @Test
+    public void testCanStoreResponseVariable() throws RuntimeException, TemplateParserException {
+        JsonBody body = new JsonBody();
+        body.setBodyData(Map.of(
+                "user_id", "3",
+                "age", "25",
+                "address.city", "london"
+        ));
+        Response res = Response.builder()
+                .headers(new Headers(Map.of()))
+                .jsonBody(body)
+                .build();
+
+        StoreValues vals = new StoreValues();
+        vals.setValues(Map.of(
+                "id", "body.user_id",
+                "city", "body.address.city"
+        ));
+
+        TestContext context = new TestContext();
+        FunctionHandler handler = new FunctionHandler();
+        TemplateParser templateParser = new TemplateParser(context, handler);
+
+        templateParser.setStoredValues(res, vals);
+
+        assertEquals("3", context.getValue("id"));
+        assertEquals("london", context.getValue("city"));
+    }
+
     @Test
     public void testCanParseVariablesInRequest() throws Exception {
         String json = """
@@ -152,7 +184,7 @@ public class TemplateParserTest {
         // Missing value
         // context.setVariable("userId", "1");
 
-        assertThrows(RuntimeException.class, () -> templateParser.parseRequest(req));
+        assertThrows(TemplateParserException.class, () -> templateParser.parseRequest(req));
     }
 
     @Test
@@ -178,6 +210,35 @@ public class TemplateParserTest {
 
         context.setVariable("token", "test_token");
 
-        assertThrows(NoSuchMethodException.class, () -> templateParser.parseRequest(req));
+        assertThrows(TemplateParserException.class, () -> templateParser.parseRequest(req));
     }
+
+    @Test
+    public void testThrowsWhenTemplateCreatesInvalidJson() throws JsonProcessingException {
+        String json = """
+                {
+                    "method": "POST",
+                    "url": "https://api.one/create",
+                    "headers": {
+                      "Authorization": "Bearer ${token}"
+                    },
+                    "body": {
+                      "emptyEmail": "${invalidString}"
+                    }
+                }
+                """;
+
+        Request req = JsonParser.fromJson(json, Request.class);
+
+        TestContext context = new TestContext();
+        context.setVariable("invalidString", "\"invalid}}}},}");
+        FunctionHandler handler = new FunctionHandler();
+        TemplateParser templateParser = new TemplateParser(context, handler);
+
+        context.setVariable("token", "test_token");
+
+        assertThrows(TemplateParserException.class, () -> templateParser.parseRequest(req));
+    }
+
+
 }
