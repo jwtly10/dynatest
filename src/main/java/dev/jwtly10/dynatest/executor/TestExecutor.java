@@ -23,8 +23,8 @@ public class TestExecutor {
         this.client = client;
     }
 
-    public void runTestSuit(TestList testList) {
-        for (TestRun test : testList.getTests()) {
+    public void runTestSuite(TestSuite testSuite) {
+        for (TestRun test : testSuite.getTests()) {
             executeTest(test);
         }
     }

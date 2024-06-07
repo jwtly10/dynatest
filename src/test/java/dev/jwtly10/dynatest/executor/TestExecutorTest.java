@@ -4,7 +4,7 @@ import dev.jwtly10.dynatest.config.TemplateParserConfig;
 import dev.jwtly10.dynatest.models.JsonBody;
 import dev.jwtly10.dynatest.models.Request;
 import dev.jwtly10.dynatest.models.Response;
-import dev.jwtly10.dynatest.models.TestList;
+import dev.jwtly10.dynatest.models.TestSuite;
 import dev.jwtly10.dynatest.parser.JsonParser;
 import dev.jwtly10.dynatest.services.HttpClientService;
 import dev.jwtly10.dynatest.util.FunctionHandler;
@@ -33,7 +33,7 @@ class TestExecutorTest {
     private ArgumentCaptor<Request> requestCaptor;
 
     @Test
-    void runTestSuit() throws Exception {
+    void runTestSuite() throws Exception {
         String json = """
                 {
                   "tests": [
@@ -76,7 +76,7 @@ class TestExecutorTest {
                 }
                 """;
 
-        TestList testSuit = JsonParser.fromJson(json, TestList.class);
+        TestSuite testSuite = JsonParser.fromJson(json, TestSuite.class);
 
         JsonBody mockBody = new JsonBody();
         mockBody.setBodyData(Map.of(
@@ -92,7 +92,7 @@ class TestExecutorTest {
         TemplateParserConfig config = new TemplateParserConfig(handler);
         TestExecutor executor = new TestExecutor(config, mockClient);
 
-        executor.runTestSuit(testSuit);
+        executor.runTestSuite(testSuite);
 
         verify(mockClient, times(2)).makeRequest(requestCaptor.capture());
         List<Request> capturedRequests = requestCaptor.getAllValues();
