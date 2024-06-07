@@ -52,4 +52,8 @@ public class TestSuiteService {
             throw new RuntimeException("Could not find test suite with id " + id);
         }
     }
+
+    public void deleteTestSuite(int id) {
+        testSuiteRepository.deleteById(id);
+    }
 }

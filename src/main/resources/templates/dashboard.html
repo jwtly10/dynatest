@@ -397,14 +397,42 @@
                                         <div class="d-flex flex-column text-right">
                                             <p class="text-secondary m-0 p-0"><small>Created: <span
                                                     id="metaCreated">2023-02-01 12:11:83</span></small></p>
-                                            <p class="text-secondary m-0 p-0"><small>Updated: <span
-                                                    id="metaUpdated">2023-02-08 12:11:83</span></small></p>
+                                            <p class="text-secondary m-0 p-0"><small>Updated:
+                                                <span id="metaUpdated">2023-02-08 12:11:83</span></small></p>
+                                            <p class="text-secondary m-0 mt-auto p-0"
+                                               id="deleteTestSuite"><small data-target="#deleteConfirmModal"
+                                                                           data-toggle="modal"
+                                                                           style="cursor:pointer;">delete
+                                                me</small></p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
+                    <!-- Modal -->
+                    <div aria-hidden="true" aria-labelledby="deleteConfirmModalLabel" class="modal fade"
+                         id="deleteConfirmModal"
+                         role="dialog" tabindex="-1">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteConfirmModalLabel">Confirm Delete</h5>
+                                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete this test suite?
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-secondary" data-dismiss="modal" type="button">Cancel</button>
+                                    <button class="btn btn-danger" id="confirmDeleteButton" type="button">Yes, Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="col-lg-6 mb-4">
@@ -508,15 +536,19 @@
             });
         });
 
+        document.getElementById('confirmDeleteButton').addEventListener('click', function (e) {
+            e.preventDefault()
+
+            const id = document.getElementById("testSuiteId").value
+            deleteTestSuite(id)
+            deleteSideBarTestSuiteName(id)
+
+            // Close the modal
+            $('#deleteConfirmModal').modal('hide');
+        });
+
         const newTestSuite = document.getElementById("newTestSuite")
         newTestSuite.addEventListener('click', async function (e) {
-            // e.preventDefault();
-            // const name = document.getElementById("newTestSuiteName").value
-            // const config = document.getElementById("newTestSuiteConfig").value
-            // console.log("Name: " + name)
-            // console.log("Config: " + config)
-            // await postNewTestSuite(name, config)
-
             // Init an example test suite
             const exampleJson = {
                 "tests": [
@@ -608,8 +640,18 @@
 
     }
 
+    async function deleteTestSuite(id) {
+        hideAlerts()
+        try {
+            await fetch(`/test-suites/delete/${id}`, {method: "DELETE"})
+        } catch (e) {
+            console.error("Error deleting suite:", e)
+            setAlert(e.message, "error-main")
+        }
+    }
+
     async function fetchTestSuiteDetails(id) {
-        mainConfigErrorAlert.innerHTML = ""
+        hideAlerts()
         try {
             const response = await fetch(`/test-suites/${id}`, {
                 method: "GET",
@@ -668,12 +710,23 @@
         testSuiteId.value = data.id
     }
 
+
     function updateSidebarTestSuiteName(id, newName) {
         const listItem = document.querySelector(`a[data-id='${id}']`);
         if (listItem) {
             const spanElement = listItem.querySelector('span');
             if (spanElement) {
                 spanElement.textContent = newName;
+            }
+        }
+    }
+
+    function deleteSideBarTestSuiteName(id) {
+        const listItem = document.querySelector(`a[data-id='${id}']`);
+        if (listItem) {
+            const parentLi = listItem.closest('li');
+            if (parentLi) {
+                parentLi.remove();
             }
         }
     }

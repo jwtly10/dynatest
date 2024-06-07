@@ -23,6 +23,11 @@ public class TestSuiteController {
         return testSuiteService.saveTestSuite(req.getName(), req.getConfiguration());
     }
 
+    @DeleteMapping("/delete/{id}")
+    public void deleteTestSuite(@PathVariable int id) {
+        testSuiteService.deleteTestSuite(id);
+    }
+
     @GetMapping
     public List<TestSuiteEntity> getAllTestSuites() {
         return testSuiteService.getAllTestSuites();
