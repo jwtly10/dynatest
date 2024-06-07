@@ -11,14 +11,11 @@
 
     <title>DynaTest - Dashboard</title>
 
-    <!-- Custom fonts for this template-->
-    <!--    <link href="js/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">-->
     <script crossorigin="anonymous" src="https://kit.fontawesome.com/5523241ba3.js"></script>
     <link
             href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
             rel="stylesheet">
 
-    <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.css" rel="stylesheet">
     <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
           integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" rel="stylesheet">
@@ -48,23 +45,16 @@
     <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-        <!-- Sidebar - Brand -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#"
+           onclick="showWelcomePage()">
             <div class="sidebar-brand-icon rotate-n-15">
                 <i class="fas fa-flask"></i>
             </div>
             <div class="sidebar-brand-text mx-3">DynaTest</div>
         </a>
 
-        <!-- Divider -->
         <hr class="sidebar-divider my-0">
 
-        <!-- Nav Item - Dashboard -->
-        <!--        <li class="nav-item active">-->
-        <!--            <a class="nav-link" href="index.html">-->
-        <!--                <i class="fas fa-fw fa-tachometer-alt"></i>-->
-        <!--                <span>Test Suite Dashboard</span></a>-->
-        <!--        </li>-->
 
         <button class="btn btn-danger rounded mr-3 ml-3" id="newTestSuite" type="button">
             New Test Suite
@@ -91,6 +81,7 @@
     <!-- End of Sidebar -->
 
     <!-- Content Wrapper -->
+
     <div class="d-flex flex-column" id="content-wrapper">
 
         <!-- Main Content -->
@@ -104,49 +95,7 @@
                     <i class="fa fa-bars"></i>
                 </button>
 
-                <!-- Topbar Search -->
-                <!--                <form-->
-                <!--                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">-->
-                <!--                    <div class="input-group">-->
-                <!--                        <input aria-describedby="basic-addon2" aria-label="Search"-->
-                <!--                               class="form-control bg-light border-0 small"-->
-                <!--                               placeholder="Search for..." type="text">-->
-                <!--                        <div class="input-group-append">-->
-                <!--                            <button class="btn btn-primary" type="button">-->
-                <!--                                <i class="fas fa-search fa-sm"></i>-->
-                <!--                            </button>-->
-                <!--                        </div>-->
-                <!--                    </div>-->
-                <!--                </form>-->
-
-                <!-- Topbar Navbar -->
                 <ul class="navbar-nav ml-auto">
-
-                    <!--                    &lt;!&ndash; Nav Item - Search Dropdown (Visible Only XS) &ndash;&gt;-->
-                    <!--                    <li class="nav-item dropdown no-arrow d-sm-none">-->
-                    <!--                        <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle"-->
-                    <!--                           data-toggle="dropdown"-->
-                    <!--                           href="#" id="searchDropdown" role="button">-->
-                    <!--                            <i class="fas fa-search fa-fw"></i>-->
-                    <!--                        </a>-->
-                    <!--                        &lt;!&ndash; Dropdown - Messages &ndash;&gt;-->
-                    <!--                        <div aria-labelledby="searchDropdown"-->
-                    <!--                             class="dropdown-menu dropdown-menu-right p-3 shadow animated&#45;&#45;grow-in">-->
-                    <!--                            <form class="form-inline mr-auto w-100 navbar-search">-->
-                    <!--                                <div class="input-group">-->
-                    <!--                                    <input aria-describedby="basic-addon2" aria-label="Search"-->
-                    <!--                                           class="form-control bg-light border-0 small" placeholder="Search for..."-->
-                    <!--                                           type="text">-->
-                    <!--                                    <div class="input-group-append">-->
-                    <!--                                        <button class="btn btn-primary" type="button">-->
-                    <!--                                            <i class="fas fa-search fa-sm"></i>-->
-                    <!--                                        </button>-->
-                    <!--                                    </div>-->
-                    <!--                                </div>-->
-                    <!--                            </form>-->
-                    <!--                        </div>-->
-                    <!--                    </li>-->
-
                     <!-- Nav Item - Alerts -->
                     <li class="nav-item dropdown no-arrow mx-1">
                         <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle"
@@ -311,28 +260,49 @@
 
             <!-- Begin Page Content -->
             <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-6 mb-4">
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Run Options</h6>
-                            </div>
-                            <div class="card-body d-flex flex-column justify-content-center align-content-center">
-                                <div class="d-flex flex-row align-items-center">
-                                    <button class="btn btn-success mr-3 w-25">Run</button>
-                                    <p class="m-0 p-0">Run Test Suite</p>
+                <div class="w-100 h-100 text-center" id="placeholder-main-content">
+                    <h3 class="mb-1">DynaTest</h3>
+                    <h5>Streamlined API E2E Testing</h5>
+                    <p style="">
+                        Documentation can be found at <a href="https://www.github.com.jwtly10/dynatest/docs">https://www.github.com.jwtly10/dynatest/docs</a>.
+                        <br>
+                        <br>
+                        <br>
+                        This streamlined testing tool is used to validate API structure and datatypes,
+                        <br>
+                        ensuring between
+                        deployments an API contract between you
+                        and a client hasn't changed.
+                        <br>
+                        <br>
+                        Get started by creating a new test suite on the left or choosing
+                        <br>
+                        an existing test suite to start testing!
+                    </p>
+                </div>
+                <div id="main-content" style="display:none;">
+                    <div class="row">
+                        <div class="col-lg-6 mb-4">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Run Options</h6>
+                                </div>
+                                <div class="card-body d-flex flex-column justify-content-center align-content-center">
+                                    <div class="d-flex flex-row align-items-center">
+                                        <button class="btn btn-success mr-3 w-25">Run</button>
+                                        <p class="m-0 p-0">Run Test Suite</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="col-lg-6 mb-4">
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Runner Log</h6>
-                            </div>
-                            <div class="card-body d-flex flex-column justify-content-center align-content-center"
-                                 style="height:250px;">
+                        <div class="col-lg-6 mb-4">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Runner Log</h6>
+                                </div>
+                                <div class="card-body d-flex flex-column justify-content-center align-content-center"
+                                     style="height:250px;">
                                             <textarea class="w-100 h-100" id="testSuiteLog">
                                                 INFO: This is a log
                                                 INFO: This is another log
@@ -349,97 +319,100 @@
                                                 INFO: This is another log
                                                 INFO: This is another log
                                             </textarea>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Content Row -->
-                <div class="row">
+                    <!-- Content Row -->
+                    <div class="row">
 
-                    <!-- Content Column -->
-                    <div class="col-xl-7 col-lg-8 mb-4">
+                        <!-- Content Column -->
+                        <div class="col-xl-7 col-lg-8 mb-4">
 
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Test Suite Config</h6>
-                            </div>
-                            <div class="card-body d-flex flex-column">
-                                <label for="testSuiteName">Test Suite name</label>
-                                <input id="testSuiteName"/>
-                                <label for="testSuiteConfig">Config</label>
-                                <textarea class="editor" id="testSuiteConfig"></textarea>
-                            </div>
-                            <div class="card-footer">
-                                <input id="testSuiteId" type="hidden"/>
-                                <div class="alert alert-danger" id="updateTestSuiteError" role="alert"
-                                     style="display: none;">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Test Suite Config</h6>
                                 </div>
-                                <div class="alert alert-success" id="updateTestSuiteSuccess" role="alert"
-                                     style="display: none;">
+                                <div class="card-body d-flex flex-column">
+                                    <label for="testSuiteName">Test Suite name</label>
+                                    <input id="testSuiteName"/>
+                                    <label for="testSuiteConfig">Config</label>
+                                    <textarea class="editor" id="testSuiteConfig"></textarea>
                                 </div>
-                                <button class="btn btn-primary" id="updateTestSuite">Save</button>
+                                <div class="card-footer">
+                                    <input id="testSuiteId" type="hidden"/>
+                                    <div class="alert alert-danger" id="updateTestSuiteError" role="alert"
+                                         style="display: none;">
+                                    </div>
+                                    <div class="alert alert-success" id="updateTestSuiteSuccess" role="alert"
+                                         style="display: none;">
+                                    </div>
+                                    <button class="btn btn-primary" id="updateTestSuite">Save</button>
+                                </div>
                             </div>
+
                         </div>
 
-                    </div>
-
-                    <div class="col-xl-5 col-lg-4 mb-4">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="card shadow mb-4">
-                                    <div class="card-header py-3">
-                                        <h6 class="m-0 font-weight-bold text-primary">Meta Data</h6>
-                                    </div>
-                                    <div class="card-body d-flex flex-column">
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="d-flex flex-column text-right">
-                                            <p class="text-secondary m-0 p-0"><small>Created: <span
-                                                    id="metaCreated">2023-02-01 12:11:83</span></small></p>
-                                            <p class="text-secondary m-0 p-0"><small>Updated:
-                                                <span id="metaUpdated">2023-02-08 12:11:83</span></small></p>
-                                            <p class="text-secondary m-0 mt-auto p-0"
-                                               id="deleteTestSuite"><small data-target="#deleteConfirmModal"
-                                                                           data-toggle="modal"
-                                                                           style="cursor:pointer;">delete
-                                                me</small></p>
+                        <div class="col-xl-5 col-lg-4 mb-4">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card shadow mb-4">
+                                        <div class="card-header py-3">
+                                            <h6 class="m-0 font-weight-bold text-primary">Meta Data</h6>
+                                        </div>
+                                        <div class="card-body d-flex flex-column">
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="d-flex flex-column text-right">
+                                                <p class="text-secondary m-0 p-0"><small>Created: <span
+                                                        id="metaCreated">2023-02-01 12:11:83</span></small></p>
+                                                <p class="text-secondary m-0 p-0"><small>Updated:
+                                                    <span id="metaUpdated">2023-02-08 12:11:83</span></small></p>
+                                                <p class="text-secondary m-0 mt-auto p-0"
+                                                   id="deleteTestSuite"><small data-target="#deleteConfirmModal"
+                                                                               data-toggle="modal"
+                                                                               style="cursor:pointer;">delete
+                                                    me</small></p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Modal -->
-                    <div aria-hidden="true" aria-labelledby="deleteConfirmModalLabel" class="modal fade"
-                         id="deleteConfirmModal"
-                         role="dialog" tabindex="-1">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="deleteConfirmModalLabel">Confirm Delete</h5>
-                                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    Are you sure you want to delete this test suite?
-                                </div>
-                                <div class="modal-footer">
-                                    <button class="btn btn-secondary" data-dismiss="modal" type="button">Cancel</button>
-                                    <button class="btn btn-danger" id="confirmDeleteButton" type="button">Yes, Delete
-                                    </button>
+                        <!-- Modal -->
+                        <div aria-hidden="true" aria-labelledby="deleteConfirmModalLabel" class="modal fade"
+                             id="deleteConfirmModal"
+                             role="dialog" tabindex="-1">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteConfirmModalLabel">Confirm Delete</h5>
+                                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to delete this test suite?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-secondary" data-dismiss="modal" type="button">Cancel
+                                        </button>
+                                        <button class="btn btn-danger" id="confirmDeleteButton" type="button">Yes,
+                                            Delete
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        <div class="col-lg-6 mb-4">
+
+                        </div>
                     </div>
 
-                    <div class="col-lg-6 mb-4">
-
-                    </div>
                 </div>
-
             </div>
             <!-- /.container-fluid -->
 
@@ -529,6 +502,7 @@
         const navLinks = document.querySelectorAll('.nav-link.collapsed');
         navLinks.forEach(link => {
             link.addEventListener('click', async function (e) {
+                showMainContent()
                 hideAlerts()
                 e.preventDefault();
                 const testSuiteId = this.getAttribute('data-id');
@@ -542,6 +516,7 @@
             const id = document.getElementById("testSuiteId").value
             deleteTestSuite(id)
             deleteSideBarTestSuiteName(id)
+            showWelcomePage()
 
             // Close the modal
             $('#deleteConfirmModal').modal('hide');
@@ -596,6 +571,7 @@
             sidebarList.appendChild(newListItem);
 
             newListItem.addEventListener('click', async function (e) {
+                showMainContent()
                 hideAlerts()
                 e.preventDefault();
                 await fetchTestSuiteDetails(newData.id);
@@ -603,6 +579,7 @@
 
 
             updateMainContent(newData)
+            showMainContent()
         })
 
         const updateTestSuite = document.getElementById("updateTestSuite")
@@ -737,6 +714,16 @@
 
         mainConfigSuccessAlert.style.display = "none"
         mainConfigSuccessAlert.innerHTML = ""
+    }
+
+    function showWelcomePage() {
+        document.getElementById('placeholder-main-content').style.display = 'block';
+        document.getElementById('main-content').style.display = 'none';
+    }
+
+    function showMainContent() {
+        document.getElementById('placeholder-main-content').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
     }
 
     function setAlert(message, type) {
