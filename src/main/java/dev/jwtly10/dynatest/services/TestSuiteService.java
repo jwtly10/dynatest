@@ -25,6 +25,7 @@ public class TestSuiteService {
         entity.setName(name);
         entity.setCreatedAt(LocalDateTime.now());
         entity.setUpdatedAt(LocalDateTime.now());
+        log.info("Saving test suite: " + entity.toString());
         return testSuiteRepository.save(entity);
     }
 
