@@ -33,7 +33,7 @@ public class TestSuiteController {
         return testSuiteService.getTestSuiteById(id);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("update/{id}")
     public TestSuiteEntity updateTestSuite(@PathVariable int id, @RequestBody TestSuiteRequestBody req) {
         return testSuiteService.updateTestSuite(id, req.getName(), req.getConfiguration());
     }

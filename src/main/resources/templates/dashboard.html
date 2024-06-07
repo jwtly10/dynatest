@@ -440,20 +440,57 @@
                 <!-- Content Row -->
 
                 <div class="row">
+                    <div class="col-lg-6 mb-4">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Run Options</h6>
+                            </div>
+                            <div class="card-body d-flex flex-column justify-content-center align-content-center">
+                                <div class="d-flex flex-row align-items-center">
+                                    <button class="btn btn-success mr-3 w-25">Run</button>
+                                    <p class="m-0 p-0">Run Test Suite</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="col-lg-6 mb-4">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Runner Log</h6>
+                            </div>
+                            <div class="card-body d-flex flex-column justify-content-center align-content-center"
+                                 style="height:250px;">
+                                            <textarea class="w-100 h-100" id="testSuiteLog">
+                                                INFO: This is a log
+                                                INFO: This is another log
+                                                INFO: This is a log
+                                                INFO: This is a log
+                                                INFO: This is a log
+                                                INFO: This is a log
+                                                INFO: This is a log
+                                                INFO: This is a log
+                                                INFO: This is another log
+                                                INFO: This is another log
+                                                INFO: This is another log
+                                                INFO: This is another log
+                                                INFO: This is another log
+                                                INFO: This is another log
+                                            </textarea>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Content Row -->
                 <div class="row">
 
                     <!-- Content Column -->
-                    <div class="col-xl-6 col-lg-8 mb-4">
-                        <!--                        <div class="col-lg-7 mb-4">-->
+                    <div class="col-xl-7 col-lg-8 mb-4">
 
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">Test Suite Config</h6>
-                                <!--                                <h6 class="m-0 font-weight-bold text-primary" id="testSuiteName">Test Suite Config</h6>-->
                             </div>
                             <div class="card-body d-flex flex-column">
                                 <label for="testSuiteName">Test Suite name</label>
@@ -462,14 +499,39 @@
                                 <textarea class="editor" id="testSuiteConfig"></textarea>
                             </div>
                             <div class="card-footer">
-                                <button class="btn btn-secondary">Cancel</button>
-                                <button class="btn btn-primary">Save</button>
-
+                                <input id="testSuiteId" type="hidden"/>
+                                <div class="alert alert-danger" id="updateTestSuiteError" role="alert"
+                                     style="display: none;">
+                                </div>
+                                <div class="alert alert-success" id="updateTestSuiteSuccess" role="alert"
+                                     style="display: none;">
+                                </div>
+                                <button class="btn btn-primary" id="updateTestSuite">Save</button>
                             </div>
                         </div>
 
-                        <!-- Color System -->
-                        <div class="row"></div>
+                    </div>
+
+                    <div class="col-xl-5 col-lg-4 mb-4">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card shadow mb-4">
+                                    <div class="card-header py-3">
+                                        <h6 class="m-0 font-weight-bold text-primary">Meta Data</h6>
+                                    </div>
+                                    <div class="card-body d-flex flex-column">
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="d-flex flex-column text-right">
+                                            <p class="text-secondary m-0 p-0"><small>Created: <span
+                                                    id="metaCreated">2023-02-01 12:11:83</span></small></p>
+                                            <p class="text-secondary m-0 p-0"><small>Updated: <span
+                                                    id="metaUpdated">2023-02-08 12:11:83</span></small></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
 
@@ -488,7 +550,7 @@
         <footer class="sticky-footer bg-white">
             <div class="container my-auto">
                 <div class="copyright text-center my-auto">
-                    <span>Copyright &copy; Your Website 2021</span>
+                    <span>Copyright &copy; <a href="https://www.github.com/jwtly10">@jwtly10</a> 2024</span>
                 </div>
             </div>
         </footer>
@@ -525,26 +587,12 @@
     </div>
 </div>
 
-<!-- Bootstrap core JavaScript-->
 <script crossorigin="anonymous"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
         src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
 <script crossorigin="anonymous"
         integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
         src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Core plugin JavaScript-->
-<!--<script src="js/jquery-easing/jquery.easing.min.js"></script>-->
-
-<!-- Custom scripts for all pages-->
-<script src="js/sb-admin-2.min.js"></script>
-
-<!-- Page level plugins -->
-<!--<script src="js/chart.js/Chart.min.js"></script>-->
-
-<!-- Page level custom scripts -->
-<!--<script src="js/demo/chart-area-demo.js"></script>-->
-<!--<script src="js/demo/chart-pie-demo.js"></script>-->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
@@ -553,10 +601,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsonlint/1.6.0/jsonlint.min.js"></script>
 
 <script>
-    let editor;
+    let currentConfigEditor;
+    let mainConfigErrorAlert;
+    let mainConfigSuccessAlert;
     document.addEventListener('DOMContentLoaded', (event) => {
+        mainConfigErrorAlert = document.getElementById("updateTestSuiteError")
+        mainConfigSuccessAlert = document.getElementById("updateTestSuiteSuccess")
 
-        editor = CodeMirror.fromTextArea(document.getElementById('testSuiteConfig'), {
+        // setting up editor logic
+        currentConfigEditor = CodeMirror.fromTextArea(document.getElementById('testSuiteConfig'), {
             mode: "application/json",
             theme: "monokai",
             lineNumbers: true,
@@ -566,10 +619,11 @@
 
         const navLinks = document.querySelectorAll('.nav-link.collapsed');
         navLinks.forEach(link => {
-            link.addEventListener('click', function (e) {
+            link.addEventListener('click', async function (e) {
+                hideAlerts()
                 e.preventDefault();
                 const testSuiteId = this.getAttribute('data-id');
-                fetchTestSuiteDetails(testSuiteId);
+                await fetchTestSuiteDetails(testSuiteId);
             });
         });
 
@@ -583,19 +637,30 @@
             await postNewTestSuite(name, config)
         })
 
+        const updateTestSuite = document.getElementById("updateTestSuite")
+        updateTestSuite.addEventListener('click', async function (e) {
+            e.preventDefault()
+
+            const id = document.getElementById("testSuiteId").value
+            const name = document.getElementById("testSuiteName").value
+            const config = currentConfigEditor.getValue()
+
+            await updateTestSuiteDetails(id, name, config)
+        })
+
     });
 
     async function postNewTestSuite(name, testSuiteJson) {
-        const data = {
-            name: name,
-            configuration: testSuiteJson
-        }
-
+        hideAlerts()
         try {
             const response = await fetch('/test-suites/new', {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(data)
+                body: JSON.stringify({
+                        name: name,
+                        configuration: testSuiteJson
+                    }
+                )
             })
 
             console.log(response)
@@ -605,23 +670,78 @@
 
     }
 
-    function fetchTestSuiteDetails(id) {
-        fetch(`/test-suites/${id}`)
-            .then(response => response.json())
-            .then(data => updateMainContent(data))
-            .catch(error => console.error('Error fetching test suite details:', error));
+    async function fetchTestSuiteDetails(id) {
+        mainConfigErrorAlert.innerHTML = ""
+        try {
+            const response = await fetch(`/test-suites/${id}`, {
+                method: "GET",
+            })
+
+            const data = await response.json()
+            updateMainContent(data)
+        } catch (e) {
+            console.error('Error fetching test suite details:', e)
+        }
+    }
+
+    async function updateTestSuiteDetails(id, name, config) {
+        hideAlerts()
+        try {
+            const response = await fetch(`test-suites/update/${id}`, {
+                method: "PUT",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(
+                    {
+                        name: name,
+                        configuration: config
+                    }
+                )
+            })
+            console.log(response)
+            setAlert("Successfully updated test suite", "success-main")
+        } catch (e) {
+            console.error("Cant update test suite: ", e)
+            // TODO, display errors
+            setAlert(e.message, "error-main")
+        }
     }
 
     function updateMainContent(data) {
         console.log(data)
         const testSuiteName = document.getElementById("testSuiteName")
+        const testSuiteId = document.getElementById("testSuiteId")
         try {
-            editor.setValue(JSON.stringify(JSON.parse(data.configuration), null, 2))
+            currentConfigEditor.setValue(JSON.stringify(JSON.parse(data.configuration), null, 2))
         } catch (e) {
             console.error("Error formating JSON: " + e)
-            editor.setValue(data.configuration)
+            currentConfigEditor.setValue(data.configuration)
         }
         testSuiteName.value = data.name
+        testSuiteId.value = data.id
+    }
+
+    function hideAlerts() {
+        mainConfigErrorAlert.style.display = "none"
+        mainConfigErrorAlert.innerHTML = ""
+
+        mainConfigSuccessAlert.style.display = "none"
+        mainConfigSuccessAlert.innerHTML = ""
+    }
+
+    function setAlert(message, type) {
+        switch (type) {
+            case "success-main":
+                mainConfigSuccessAlert.style.display = "block"
+                mainConfigSuccessAlert.innerHTML = message
+                break;
+            case "error-main":
+                mainConfigErrorAlert.style.display = "block"
+                mainConfigErrorAlert.innerHTML = message
+                break;
+            default:
+                console.error("This alert type doesnt exist: " + type)
+                break;
+        }
     }
 
     // const mainContent = document.getElementById('main-content');
