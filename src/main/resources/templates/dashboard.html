@@ -32,7 +32,6 @@
         .CodeMirror {
             height: 100%
         }
-
     </style>
 
 </head>
@@ -72,8 +71,10 @@
 
         <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item" th:each="testSuite : ${testSuites}">
-            <a class="nav-link collapsed" href="#" th:attr="data-id=${testSuite.id}">
+            <a class="nav-link collapsed d-flex justify-content-between align-items-center" href="#"
+               th:attr="data-id=${testSuite.id}">
                 <span th:text="${testSuite.name}"></span>
+                <i class="fas fa-chevron-right chevron-icon"></i>
             </a>
         </li>
 
@@ -362,6 +363,11 @@
                                             <h6 class="m-0 font-weight-bold text-primary">Meta Data</h6>
                                         </div>
                                         <div class="card-body d-flex flex-column">
+                                            <p><b>Runs: </b><span id="metaRuns"></span></p>
+                                            <p><b>Pass Count: </b><span id="metaPassCount"></span></p>
+                                            <p><b>Fail Count: </b><span id="metaFailCount"></span></p>
+                                            <p><b>Last Outcome: </b><span id="metaLastOutcome"></span></p>
+                                            <p><b>Last Finished Run: </b><span id="metaLastFinished"></span></p>
                                         </div>
                                         <div class="card-footer">
                                             <div class="d-flex flex-column text-right">
@@ -633,6 +639,7 @@
             })
 
             const data = await response.json()
+            console.log("Found test suite data: " + data)
             updateMainContent(data)
         } catch (e) {
             console.error('Error fetching test suite details:', e)
@@ -689,19 +696,38 @@
     }
 
     function updateMainContent(data) {
-        console.log(data)
         const testSuiteName = document.getElementById("testSuiteName")
         const testSuiteId = document.getElementById("testSuiteId")
+
+        const metaRuns = document.getElementById("metaRuns")
+        const metaPassCount = document.getElementById("metaPassCount")
+        const metaFailCount = document.getElementById("metaFailCount")
+        const metaLastOutcome = document.getElementById("metaLastOutcome")
+        const metaLastFinished = document.getElementById("metaLastFinished")
+        const metaCreated = document.getElementById("metaCreated")
+        const metaUpdated = document.getElementById("metaUpdated")
+
         try {
-            currentConfigEditor.setValue(JSON.stringify(JSON.parse(data.configuration), null, 2))
+            currentConfigEditor.setValue(JSON.stringify(JSON.parse(data.entity.configuration), null, 2))
         } catch (e) {
             console.error("Error formating JSON: " + e)
-            currentConfigEditor.setValue(data.configuration)
+            currentConfigEditor.setValue(data.entity.configuration)
         }
-        testSuiteName.value = data.name
-        testSuiteId.value = data.id
+        testSuiteName.value = data.entity.name
+        testSuiteId.value = data.entity.id
+
+        metaRuns.textContent = data.metaData.runs
+        metaPassCount.textContent = data.metaData.passCount
+        metaFailCount.textContent = data.metaData.failCount
+        metaLastOutcome.textContent = data.metaData.lastOutcome
+        metaLastFinished.textContent = formatDate(data.metaData.lastFinishedRunAt)
+        metaCreated.textContent = formatDate(data.entity.createdAt)
+        metaUpdated.textContent = formatDate(data.entity.updatedAt)
     }
 
+    function formatDate(date) {
+        return date.replace("T", " ")
+    }
 
     function updateSidebarTestSuiteName(id, newName) {
         const listItem = document.querySelector(`a[data-id='${id}']`);

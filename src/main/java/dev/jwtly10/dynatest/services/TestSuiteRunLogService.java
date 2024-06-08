@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -58,8 +59,8 @@ public class TestSuiteRunLogService {
         return testSuiteRunLogRepository.save(entity);
     }
 
-    public Optional<TestSuiteRunLogEntity> getRunLogForTestSuite(int testSuiteId) {
-        return testSuiteRunLogRepository.findById(testSuiteId);
+    public List<TestSuiteRunLogEntity> getRunLogsForTestSuite(int testSuiteId) {
+        return testSuiteRunLogRepository.findAllByTestSuiteId(testSuiteId);
     }
 
     public Optional<TestSuiteRunLogEntity> getLastRunLogForTestSuite(int testSuiteId) {

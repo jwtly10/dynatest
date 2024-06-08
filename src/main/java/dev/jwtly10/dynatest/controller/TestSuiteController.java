@@ -1,7 +1,9 @@
 package dev.jwtly10.dynatest.controller;
 
+import dev.jwtly10.dynatest.dta.TestSuiteDataResponseBody;
 import dev.jwtly10.dynatest.dta.TestSuiteRequestBody;
 import dev.jwtly10.dynatest.models.TestSuiteEntity;
+import dev.jwtly10.dynatest.services.SuiteService;
 import dev.jwtly10.dynatest.services.TestSuiteService;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +15,11 @@ import java.util.Optional;
 public class TestSuiteController {
 
     private final TestSuiteService testSuiteService;
+    private final SuiteService suiteService;
 
-    public TestSuiteController(TestSuiteService testSuiteService) {
+    public TestSuiteController(TestSuiteService testSuiteService, SuiteService suiteService) {
         this.testSuiteService = testSuiteService;
+        this.suiteService = suiteService;
     }
 
     @PostMapping("/new")
@@ -34,8 +38,9 @@ public class TestSuiteController {
     }
 
     @GetMapping("/{id}")
-    public Optional<TestSuiteEntity> getTestSuiteById(@PathVariable int id) {
-        return testSuiteService.getTestSuiteById(id);
+    public Optional<TestSuiteDataResponseBody> getTestSuiteById(@PathVariable int id) {
+        // Doesnt just get test suite data, but also gets all meta and log data about the suite
+        return suiteService.getAllDataFromTestSuite(id);
     }
 
     @PutMapping("update/{id}")

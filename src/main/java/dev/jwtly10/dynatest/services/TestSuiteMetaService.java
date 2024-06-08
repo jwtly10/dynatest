@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -17,9 +18,13 @@ public class TestSuiteMetaService {
         this.testSuiteMetaRepository = testSuiteMetaRepository;
     }
 
+    public Optional<TestSuiteMetaEntity> getMetaDataForTestSuiteRun(int testSuiteId) {
+        return testSuiteMetaRepository.findByTestSuiteId(testSuiteId);
+    }
+
     public TestSuiteMetaEntity saveMetaDataForTestSuiteRun(int testSuiteId, Status result) {
         // Either update existing row or create new one
-        TestSuiteMetaEntity testSuiteMetaEntity = testSuiteMetaRepository.findById(testSuiteId).orElse(null);
+        TestSuiteMetaEntity testSuiteMetaEntity = testSuiteMetaRepository.findByTestSuiteId(testSuiteId).orElse(null);
         if (testSuiteMetaEntity == null) {
             // If a row doesn't exist, init one with defaults
             testSuiteMetaEntity = new TestSuiteMetaEntity();
@@ -49,6 +54,7 @@ public class TestSuiteMetaService {
 
         testSuiteMetaEntity.setLastFinishedRunAt(LocalDateTime.now());
         testSuiteMetaEntity.setUpdatedAt(LocalDateTime.now());
+        log.info("Saving meta run log for test suite: " + testSuiteMetaEntity);
         return testSuiteMetaRepository.save(testSuiteMetaEntity);
     }
 }
