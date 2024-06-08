@@ -23,6 +23,7 @@ public class TestSuiteMetaService {
         if (testSuiteMetaEntity == null) {
             // If a row doesn't exist, init one with defaults
             testSuiteMetaEntity = new TestSuiteMetaEntity();
+            testSuiteMetaEntity.setTestSuiteId(testSuiteId);
             testSuiteMetaEntity.setRuns(0);
             testSuiteMetaEntity.setPassCount(0);
             testSuiteMetaEntity.setFailCount(0);

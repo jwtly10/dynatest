@@ -289,7 +289,7 @@
                                 </div>
                                 <div class="card-body d-flex flex-column justify-content-center align-content-center">
                                     <div class="d-flex flex-row align-items-center">
-                                        <button class="btn btn-success mr-3 w-25">Run</button>
+                                        <button class="btn btn-success mr-3 w-25" id="run">Run</button>
                                         <p class="m-0 p-0">Run Test Suite</p>
                                     </div>
                                 </div>
@@ -475,21 +475,11 @@
 
 <script>
     let currentConfigEditor;
-    let newConfigEditor;
     let mainConfigErrorAlert;
     let mainConfigSuccessAlert;
     document.addEventListener('DOMContentLoaded', (event) => {
         mainConfigErrorAlert = document.getElementById("updateTestSuiteError")
         mainConfigSuccessAlert = document.getElementById("updateTestSuiteSuccess")
-
-        // setting up editor logic
-        // newConfigEditor = CodeMirror.fromTextArea(document.getElementById('newTestSuiteConfig'), {
-        //     mode: "application/json",
-        //     theme: "monokai",
-        //     lineNumbers: true,
-        //     gutters: ["CodeMirror-lint-markers"],
-        //     lint: true
-        // });
 
         currentConfigEditor = CodeMirror.fromTextArea(document.getElementById('testSuiteConfig'), {
             mode: "application/json",
@@ -521,6 +511,14 @@
             // Close the modal
             $('#deleteConfirmModal').modal('hide');
         });
+
+        document.getElementById('run').addEventListener('click', async function (e) {
+            e.preventDefault()
+
+            const id = document.getElementById("testSuiteId").value
+            console.log(id)
+            runTest(id)
+        })
 
         const newTestSuite = document.getElementById("newTestSuite")
         newTestSuite.addEventListener('click', async function (e) {
@@ -641,11 +639,28 @@
         }
     }
 
-    async function updateTestSuiteDetails(id, name, config) {
-        if (id === null) {
-            console.log("This is new")
-            return;
+    async function runTest(id) {
+        hideAlerts()
+
+        try {
+            const response = await fetch(`execute/run/${id}`)
+            if (response.status !== 200) {
+                console.error("Status code is not 200 ", response.statusText)
+                return
+            }
+
+            const data = await response.json()
+
+            console.log(data)
+        } catch (e) {
+            console.error("Error running test suite: ", e)
+            // TODO, display errors
         }
+
+
+    }
+
+    async function updateTestSuiteDetails(id, name, config) {
         hideAlerts()
         try {
             const response = await fetch(`test-suites/update/${id}`, {
