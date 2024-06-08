@@ -22,6 +22,25 @@ public class TestSuiteMetaService {
         return testSuiteMetaRepository.findByTestSuiteId(testSuiteId);
     }
 
+    public TestSuiteMetaEntity initMetaData(int testSuiteId) {
+        TestSuiteMetaEntity testSuiteMetaEntity = testSuiteMetaRepository.findByTestSuiteId(testSuiteId).orElse(null);
+        if (testSuiteMetaEntity == null) {
+            // If a row doesn't exist, init one with defaults
+            testSuiteMetaEntity = new TestSuiteMetaEntity();
+            testSuiteMetaEntity.setTestSuiteId(testSuiteId);
+            testSuiteMetaEntity.setRuns(0);
+            testSuiteMetaEntity.setPassCount(0);
+            testSuiteMetaEntity.setFailCount(0);
+            testSuiteMetaEntity.setCreatedAt(LocalDateTime.now());
+            testSuiteMetaEntity.setUpdatedAt(LocalDateTime.now());
+        } else {
+            throw new RuntimeException("Cant init a meta row when one already exists");
+        }
+
+        log.info("Init meta data");
+        return testSuiteMetaRepository.save(testSuiteMetaEntity);
+    }
+
     public TestSuiteMetaEntity saveMetaDataForTestSuiteRun(int testSuiteId, Status result) {
         // Either update existing row or create new one
         TestSuiteMetaEntity testSuiteMetaEntity = testSuiteMetaRepository.findByTestSuiteId(testSuiteId).orElse(null);

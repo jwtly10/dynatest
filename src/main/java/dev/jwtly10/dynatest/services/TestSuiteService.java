@@ -14,9 +14,11 @@ import java.util.Optional;
 @Slf4j
 public class TestSuiteService {
     private final TestSuiteRepository testSuiteRepository;
+    private final TestSuiteMetaService testSuiteMetaService;
 
-    public TestSuiteService(TestSuiteRepository testSuiteRepository) {
+    public TestSuiteService(TestSuiteRepository testSuiteRepository, TestSuiteMetaService testSuiteMetaService) {
         this.testSuiteRepository = testSuiteRepository;
+        this.testSuiteMetaService = testSuiteMetaService;
     }
 
     public TestSuiteEntity saveTestSuite(String name, String testSuiteJson) {
@@ -28,7 +30,10 @@ public class TestSuiteService {
         entity.setUpdatedAt(LocalDateTime.now());
         entity.setState(State.ACTIVE);
         log.info("Saving test suite: " + entity.toString());
-        return testSuiteRepository.save(entity);
+
+        var res = testSuiteRepository.save(entity);
+        testSuiteMetaService.initMetaData(res.getId());
+        return res;
     }
 
     public List<TestSuiteEntity> getAllActiveTestSuites() {

@@ -38,7 +38,7 @@ public class TestSuiteRunLogService {
 
         entity.setEndTime(LocalDateTime.now());
         Duration duration = Duration.between(entity.getStartTime(), entity.getEndTime());
-        entity.setDuration(duration.getSeconds());
+        entity.setDuration(duration.toMillis());
         entity.setUpdatedAt(LocalDateTime.now());
         log.info("Saving finished test run log" + entity.toString());
         return testSuiteRunLogRepository.save(entity);
