@@ -14,4 +14,10 @@ public class JsonParser {
     public static String toJson(Object object) throws JsonProcessingException {
         return objectMapper.writeValueAsString(object);
     }
+
+    public static String formatError(JsonProcessingException e) {
+        String message = e.getOriginalMessage();
+        String location = e.getLocation() != null ? " at line: " + e.getLocation().getLineNr() + ", column: " + e.getLocation().getColumnNr() : "";
+        return message + location;
+    }
 }

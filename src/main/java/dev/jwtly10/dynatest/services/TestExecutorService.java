@@ -39,19 +39,24 @@ public class TestExecutorService {
         // 2. We get the json configuration from DB
         TestSuiteEntity entity = testSuiteService.getTestSuiteById(id).orElseThrow();
 
-        // 3. We parse it
+        List<Log> runLogs = new ArrayList<>();
+        // 3. We initialise any logs we need to (test_suite_run_log_tb)
+        TestSuiteRunLogEntity runLog = testSuiteRunLogService.startRunForTestSuite(id);
+
+        // 4. We parse it
         TestSuite testSuite;
         try {
             testSuite = JsonParser.fromJson(entity.getConfiguration(), TestSuite.class);
         } catch (JsonProcessingException e) {
             log.error("Failed to parse JSON from db with id {}", id, e);
+            runLogs.add(Log.of(Type.ERROR, "Config Json Parsing Failed: %s", JsonParser.formatError(e)));
+            runLogs.add(Log.of(Type.FAIL, "Unable to parse JSON configuration from DB for test suite '%s'", entity.getName()));
+            testSuiteRunLogService.failRun(runLog.getId());
+            handleOutcome(entity, Status.FAIL, runLogs);
             return;
         }
-        // 4. We initialise any logs we need to (test_suite_run_log_tb)
-        TestSuiteRunLogEntity runLog = testSuiteRunLogService.startRunForTestSuite(id);
 
         // 5. We run the test using the TestExecutor.class
-        List<Log> runLogs = new ArrayList<>();
         runLogs.add(Log.of(Type.INFO, "Starting test execution for test suite '%s'", entity.getName()));
         try {
             executor.runTestSuite(testSuite, runLogs);

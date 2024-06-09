@@ -710,6 +710,9 @@
 
             if (response.status !== 200) {
                 console.error("Status code is not 200 ", response.statusText)
+                const resBody = await response.text()
+                console.log(resBody)
+                setAlert(resBody, "error-main")
                 return
             }
             console.log(response)
@@ -717,7 +720,6 @@
             updateSidebarTestSuiteName(id, name)
         } catch (e) {
             console.error("Cant update test suite: ", e)
-            // TODO, display errors
             setAlert(e.message, "error-main")
         }
     }
