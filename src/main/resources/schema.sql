@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS test_suite_tb
     created_at    TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'utc')),
     updated_at    TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'utc'))
 );
-drop table test_suite_meta_tb;
+
 CREATE TABLE IF NOT EXISTS test_suite_meta_tb
 (
     id                   INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,7 +23,6 @@ CREATE TABLE IF NOT EXISTS test_suite_meta_tb
     FOREIGN KEY (test_suite_id) REFERENCES test_suite_tb (id)
 );;
 
-drop table test_suite_run_log_tb;
 CREATE TABLE IF NOT EXISTS test_suite_run_log_tb
 (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
