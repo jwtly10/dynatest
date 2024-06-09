@@ -14,4 +14,7 @@ public interface TestSuiteRunLogRepository extends JpaRepository<TestSuiteRunLog
     Optional<TestSuiteRunLogEntity> findLastLogRunForTestSuite(@Param("testSuiteId") int testSuiteId);
 
     List<TestSuiteRunLogEntity> findAllByTestSuiteId(int testSuiteId);
+
+    List<TestSuiteRunLogEntity> findAllByTestSuiteIdOrderByIdDesc(int testSuiteId);
+
 }

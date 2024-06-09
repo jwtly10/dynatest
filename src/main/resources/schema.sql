@@ -32,7 +32,6 @@ CREATE TABLE IF NOT EXISTS test_suite_run_log_tb
     start_time    TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'utc')),
     end_time      TEXT,
     duration      INTEGER,
-    error_message TEXT,
     created_at    TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'utc')),
     updated_at    TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'utc')),
     FOREIGN KEY (test_suite_id) REFERENCES test_suite_tb (id)

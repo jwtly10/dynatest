@@ -52,7 +52,7 @@ public class TestExecutorService {
 
         // 5. We run the test using the TestExecutor.class
         List<Log> runLogs = new ArrayList<>();
-        runLogs.add(Log.of(Type.INFO, "Starting test execution for test suite %s", id));
+        runLogs.add(Log.of(Type.INFO, "Starting test execution for test suite '%s'", entity.getName()));
         try {
             executor.runTestSuite(testSuite, runLogs);
             runLogs.add(Log.of(Type.PASS, "Test execution PASSED for test suite '%s'", entity.getName()));

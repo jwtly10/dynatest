@@ -7,6 +7,17 @@
     height: 100%
 }
 
+.table-container {
+    height: 250px;
+    overflow-y: auto;
+}
+
+.table-container thead th {
+    top: 0;
+    background: #fff;
+    z-index: 1;
+}
+
 .log-container {
     max-height: 250px;
     overflow-y: auto;

@@ -59,7 +59,7 @@ public class TestSuiteRunLogService {
     }
 
     public List<TestSuiteRunLogEntity> getRunLogsForTestSuite(int testSuiteId) {
-        return testSuiteRunLogRepository.findAllByTestSuiteId(testSuiteId);
+        return testSuiteRunLogRepository.findAllByTestSuiteIdOrderByIdDesc(testSuiteId);
     }
 
     public Optional<TestSuiteRunLogEntity> getLastRunLogForTestSuite(int testSuiteId) {

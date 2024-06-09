@@ -32,7 +32,6 @@ public class TestSuiteRunLogEntity {
     private LocalDateTime endTime;
 
     private long duration;
-    private String errorMessage;
 
     @CreationTimestamp
     @Convert(converter = LocalDateTimeAttributeConverter.class)
