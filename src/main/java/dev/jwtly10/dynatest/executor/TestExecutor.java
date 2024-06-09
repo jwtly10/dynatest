@@ -4,12 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.jwtly10.dynatest.config.TemplateParserConfig;
 import dev.jwtly10.dynatest.context.TestContext;
 import dev.jwtly10.dynatest.enums.Type;
+import dev.jwtly10.dynatest.exceptions.SchemaValidationException;
 import dev.jwtly10.dynatest.exceptions.TemplateParserException;
 import dev.jwtly10.dynatest.exceptions.TestExecutionException;
 import dev.jwtly10.dynatest.models.*;
 import dev.jwtly10.dynatest.parser.JsonParser;
 import dev.jwtly10.dynatest.parser.TemplateParser;
 import dev.jwtly10.dynatest.services.HttpClientService;
+import dev.jwtly10.dynatest.services.SchemaValidationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -22,10 +24,13 @@ public class TestExecutor {
 
     private final TemplateParserConfig templateParserConfig;
     private final HttpClientService client;
+    private final SchemaValidationService validator;
 
-    public TestExecutor(TemplateParserConfig templateParserConfig, HttpClientService client) {
+
+    public TestExecutor(TemplateParserConfig templateParserConfig, HttpClientService client, SchemaValidationService validator) {
         this.templateParserConfig = templateParserConfig;
         this.client = client;
+        this.validator = validator;
     }
 
     public void runTestSuite(TestSuite testSuite, List<Log> runLogs) throws TestExecutionException {
@@ -46,10 +51,23 @@ public class TestExecutor {
                 runLogs.add(Log.of(Type.INFO, "Running step '%s'", step.getStepName()));
                 Response res = doStep(step, templateParser, runLogs);
                 log.debug("Response from request: {}", res);
-                // Here is where we do validation on the stuff we expected in the step
+
+                // Here is where we do validation
+                if (step.getExpectedResponse() != null) {
+                    log.debug("Expected response : {}", step.getExpectedResponse());
+                    validator.validateResponse(res, step.getExpectedResponse());
+                    runLogs.add(Log.of(Type.INFO, "Response passed validation schema"));
+                } else {
+                    runLogs.add(Log.of(Type.WARN, "No validation schema found"));
+
+                }
             } catch (TestExecutionException e) {
                 log.error("Error executing step '{}'", step.getStepName(), e);
                 throw new TestExecutionException("Step '" + step.getStepName() + "' failed with error: ", e);
+            } catch (SchemaValidationException e) {
+                log.error("Response schema validation failed for step '{}'", step.getStepName(), e);
+                runLogs.add(Log.of(Type.ERROR, "Step '" + step.getStepName() + "' failed with validation error: " + e.getMessage()));
+                throw new TestExecutionException("Step '" + step.getStepName() + "' failed with error: " + e.getMessage(), e);
             }
         }
     }
@@ -79,7 +97,7 @@ public class TestExecutor {
             String resBodyString = "";
             try {
                 resBodyString = JsonParser.toJson(res.getJsonBody());
-                runLogs.add(Log.of(Type.JSON, resBodyString));
+                runLogs.add(Log.of(Type.JSON, res.getRawBody()));
             } catch (JsonProcessingException e) {
                 log.error("Error parsing response body");
                 runLogs.add(Log.of(Type.ERROR, "Failed to process response body"));

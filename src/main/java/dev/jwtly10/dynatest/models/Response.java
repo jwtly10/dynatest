@@ -30,6 +30,17 @@ public class Response {
         return headers.getHeaders();
     }
 
+    public String getRawBody() {
+        if (jsonBody == null) {
+            return "";
+        }
+
+        if (jsonBody.getRawBody() == null) {
+            return "";
+        }
+
+        return jsonBody.getRawBody();
+    }
 
     public Map<String, Object> getJsonBody() {
         if (jsonBody == null) {

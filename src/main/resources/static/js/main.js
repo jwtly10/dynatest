@@ -42,6 +42,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
         const id = document.getElementById("testSuiteId").value
         console.log(`Running test suite with id ${id}`)
+        const logContainer = document.getElementById('outputLogs');
+        logContainer.innerHTML = '';
 
         document.getElementById('spinner').style.display = 'inline-block';
         const lastResult = document.getElementById("lastResult")
@@ -49,6 +51,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         await runTestSuite(id)
         document.getElementById('spinner').style.display = 'none';
     })
+
     const newTestSuiteBtn = document.getElementById("newTestSuite")
     newTestSuiteBtn.addEventListener('click', async function (e) {
         // Init an example test suite
@@ -181,6 +184,7 @@ async function runTestSuite(id) {
         if (response.status !== 200) {
             const resBody = await response.text()
             console.error("Found error: " + response.status + " " + resBody)
+            renderErrorInOutputLog(resBody)
             return
         }
         const data = await response.json()
@@ -295,6 +299,15 @@ function updateMainContent(data) {
     }
 }
 
+function renderErrorInOutputLog(error) {
+    const logContainer = document.getElementById('outputLogs');
+    logContainer.innerHTML = '';
+    const logElement = document.createElement('div');
+    logElement.className = 'log-error';
+    logElement.innerHTML = `Sorry, an unexpected server error occured:<br><br>${error}`
+    logContainer.appendChild(logElement);
+}
+
 function renderLogs(logs) {
     const logContainer = document.getElementById('outputLogs');
     logContainer.innerHTML = '';
@@ -306,6 +319,9 @@ function renderLogs(logs) {
             logElement.textContent = `${log.type}: ${log.message}`;
         } else if (log.type === 'ERROR') {
             logElement.className = 'log-error';
+            logElement.textContent = `${log.type}: ${log.message}`;
+        } else if (log.type === 'WARN') {
+            logElement.className = 'log-warn';
             logElement.textContent = `${log.type}: ${log.message}`;
         } else if (log.type === 'PASS') {
             logElement.className = 'log-pass';
@@ -323,7 +339,7 @@ function renderLogs(logs) {
             ${log.message}`;
         } else if (log.type === 'OUTPUT_REPORT') {
             logElement.className = 'log-pass';
-            logElement.innerHTML = formatOutputReport(log.message);
+            logElement.textContent = log.message;
         } else if (log.type === 'JSON') {
             logElement.className = 'log-json';
             try {
@@ -333,6 +349,8 @@ function renderLogs(logs) {
                 logElement.textContent = log.message;
             }
         }
+
+        logElement.className = `${logElement.className} mb-1`
         logContainer.appendChild(logElement);
     });
 }

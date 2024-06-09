@@ -4,7 +4,9 @@ import dev.jwtly10.dynatest.config.TemplateParserConfig;
 import dev.jwtly10.dynatest.models.*;
 import dev.jwtly10.dynatest.parser.JsonParser;
 import dev.jwtly10.dynatest.services.HttpClientService;
+import dev.jwtly10.dynatest.services.SchemaValidationService;
 import dev.jwtly10.dynatest.util.FunctionHandler;
+import dev.jwtly10.dynatest.util.JsonValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -88,7 +90,8 @@ class TestExecutorTest {
 
         FunctionHandler handler = new FunctionHandler();
         TemplateParserConfig config = new TemplateParserConfig(handler);
-        TestExecutor executor = new TestExecutor(config, mockClient);
+        SchemaValidationService validator = new SchemaValidationService(new JsonValidator());
+        TestExecutor executor = new TestExecutor(config, mockClient, validator);
 
         List<Log> logs = new ArrayList<>();
         executor.runTestSuite(testSuite, logs);

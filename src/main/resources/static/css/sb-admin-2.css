@@ -33,7 +33,11 @@
 }
 
 .log-error {
-    color: #fa5252;
+    color: #a64949;
+}
+
+.log-warn {
+    color: #bfbf35;
 }
 
 .log-pass {

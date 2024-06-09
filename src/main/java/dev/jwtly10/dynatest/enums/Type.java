@@ -6,5 +6,6 @@ public enum Type {
     FAIL,
     PASS,
     JSON,
+    WARN,
     OUTPUT_REPORT
 }

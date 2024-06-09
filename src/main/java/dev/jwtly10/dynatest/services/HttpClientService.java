@@ -63,6 +63,7 @@ public class HttpClientService implements HttpService {
 
             try {
                 responseJsonBodyMap = JsonParser.fromJson(res.getBody(), JsonBody.class);
+                responseJsonBodyMap.setRawBody(res.getBody());
             } catch (JsonProcessingException e) {
                 log.error("Error parsing response body", e);
                 responseJsonBodyMap.setBodyData(Map.of(

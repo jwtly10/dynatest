@@ -2,6 +2,7 @@ package dev.jwtly10.dynatest.models;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,8 @@ import java.util.TreeMap;
 @NoArgsConstructor
 public class JsonBody {
     private Map<String, Object> bodyData = new HashMap<>();
+    @JsonIgnore
+    private String rawBody;
 
     public Object getKey(String key) {
         return bodyData.get(key);

@@ -10,5 +10,5 @@ import lombok.extern.jackson.Jacksonized;
 public class Step {
     private String stepName;
     private Request request;
-    private Response response;
+    private ExpectedResponse expectedResponse;
 }

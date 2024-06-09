@@ -24,12 +24,6 @@ public class TestExecutorController {
 
     @GetMapping("/run/{id}")
     public Optional<TestSuiteDataResponseBody> run(@PathVariable int id) {
-        // TODO: Remove this - artificial wait for UI testing
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         executorService.run(id);
         return suiteService.getAllDataFromTestSuite(id);
     }

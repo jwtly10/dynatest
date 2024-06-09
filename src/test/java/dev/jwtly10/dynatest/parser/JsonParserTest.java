@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -271,5 +272,9 @@ class JsonParserTest {
                  }""";
 
         ExpectedResponse re = JsonParser.fromJson(schema, ExpectedResponse.class);
+        assertEquals(200, re.getStatusCode());
+        assertEquals("number", re.getValidationSchema().getProperties().get("age").getType());
+        assertEquals("string", re.getValidationSchema().getProperties().get("address").getProperties().get("city").getType());
+        assertEquals(List.of("street", "city", "zipcode"), re.getValidationSchema().getProperties().get("address").getRequired());
     }
 }
