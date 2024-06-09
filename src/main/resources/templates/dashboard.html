@@ -724,8 +724,6 @@
         const metaCreated = document.getElementById("metaCreated")
         const metaUpdated = document.getElementById("metaUpdated")
 
-        const outputLogs = document.getElementById("outputLogs")
-
         try {
             currentConfigEditor.setValue(JSON.stringify(JSON.parse(data.entity.configuration), null, 2))
         } catch (e) {
@@ -765,6 +763,15 @@
             } else if (log.type === 'ERROR') {
                 logElement.className = 'log-error';
                 logElement.textContent = `${log.type}: ${log.message}`;
+            } else if (log.type === 'PASS') {
+                logElement.className = 'log-pass';
+                logElement.innerHTML = `===================== TEST SUITE PASSED ===================== <br>${log.message}`;
+            } else if (log.type === 'FAIL') {
+                logElement.className = 'log-fail';
+                logElement.innerHTML = `===================== TEST SUITE FAILED ===================== <br>${log.message}`;
+            } else if (log.type === 'OUTPUT_REPORT') {
+                logElement.className = 'log-pass';
+                logElement.innerHTML = formatOutputReport(log.message);
             } else if (log.type === 'JSON') {
                 logElement.className = 'log-json';
                 try {
@@ -776,6 +783,10 @@
             }
             logContainer.appendChild(logElement);
         });
+    }
+
+    function formatOutputReport(report) {
+        return report.replace("\n", "<br>")
     }
 
     function displayHistoryRunLog(logs) {

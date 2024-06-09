@@ -143,16 +143,15 @@ public class TemplateParser {
                 }
 
                 log.info("Resolving function: '{}'", functionName);
-                runLogs.add(Log.of(Type.INFO, "Resolving template function '%s()'", functionName));
+                runLogs.add(Log.of(Type.INFO, "Resolving template function '%s'", functionName));
                 try {
                     replacement = functionHandler.callFunction(functionName, args);
                 } catch (Exception e) {
-                    runLogs.add(Log.of(Type.ERROR, "Unable to resolve function '%s'", functionName));
-                    throw new TemplateParserException("Unable to invoke function '" + functionName + "'", e);
+                    throw new TemplateParserException("Unable to invoke function '" + functionName + "': " + e.getMessage(), e);
                 }
             } else {
                 log.info("Resolving variable: '{}'", key);
-                runLogs.add(Log.of(Type.INFO, "Resolving variable '%s", key));
+                runLogs.add(Log.of(Type.INFO, "Resolving variable '%s'", key));
                 try {
                     replacement = context.getValue(key);
                 } catch (NoSuchElementException e) {

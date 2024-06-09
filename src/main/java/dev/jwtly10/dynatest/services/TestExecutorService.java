@@ -55,15 +55,26 @@ public class TestExecutorService {
         runLogs.add(Log.of(Type.INFO, "Starting test execution for test suite %s", id));
         try {
             executor.runTestSuite(testSuite, runLogs);
-            runLogs.add(Log.of(Type.INFO, "Finished test execution for test suite %s", id));
+            runLogs.add(Log.of(Type.PASS, "Test execution PASSED for test suite '%s'", entity.getName()));
+            runLogs.add(Log.of(Type.OUTPUT_REPORT, handleOutputReport(testSuite)));
             testSuiteRunLogService.finishRun(runLog.getId());
             handleOutcome(entity, Status.SUCCESS, runLogs);
         } catch (TestExecutionException e) {
-            runLogs.add(Log.of(Type.ERROR, "Test execution failed for test suite %s", id));
+            runLogs.add(Log.of(Type.FAIL, "Test execution FAILED for test suite '%s'", entity.getName()));
             testSuiteRunLogService.failRun(runLog.getId());
             handleOutcome(entity, Status.FAIL, runLogs);
         }
 
+    }
+
+    private String handleOutputReport(TestSuite suite) {
+        StringBuilder outputReport = new StringBuilder();
+        outputReport.append(String.format("Ran %s tests!\n", suite.getTests().size()));
+        suite.getTests().forEach((test) -> {
+            outputReport.append(String.format("Test '%s' had %s step(s)\n", test.getName(), test.getSteps().size()));
+        });
+
+        return outputReport.toString();
     }
 
     private void handleOutcome(TestSuiteEntity entity, Status outcome, List<Log> logs) {

@@ -22,6 +22,14 @@
 }
 
 .log-error {
+    color: #fa5252;
+}
+
+.log-pass {
+    color: green;
+}
+
+.log-fail {
     color: red;
 }
 
