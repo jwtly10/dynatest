@@ -2,6 +2,9 @@ let currentConfigEditor;
 let mainConfigErrorAlert;
 let mainConfigSuccessAlert;
 
+// ***********************************************************************************
+// ON LOAD
+// ***********************************************************************************
 document.addEventListener('DOMContentLoaded', (event) => {
     mainConfigErrorAlert = document.getElementById("updateTestSuiteError")
     mainConfigSuccessAlert = document.getElementById("updateTestSuiteSuccess")
@@ -14,20 +17,18 @@ document.addEventListener('DOMContentLoaded', (event) => {
         lint: true
     });
 
+    // Init test suite nav links
     const navLinks = document.querySelectorAll('.nav-link.collapsed');
     navLinks.forEach(link => {
         link.addEventListener('click', async function (e) {
-            showMainContent()
-            hideAlerts()
-            e.preventDefault();
-            const testSuiteId = this.getAttribute('data-id');
-            await fetchTestSuiteDetails(testSuiteId);
+            await initNavLink(this, e)
         });
     });
 
+
+    // Init buttons
     document.getElementById('confirmDeleteButton').addEventListener('click', function (e) {
         e.preventDefault()
-
         const id = document.getElementById("testSuiteId").value
         deleteTestSuite(id)
         deleteSideBarTestSuiteName(id)
@@ -36,7 +37,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         // Close the modal
         $('#deleteConfirmModal').modal('hide');
     });
-
     document.getElementById('run').addEventListener('click', async function (e) {
         e.preventDefault()
 
@@ -49,9 +49,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         await runTestSuite(id)
         document.getElementById('spinner').style.display = 'none';
     })
-
-    const newTestSuite = document.getElementById("newTestSuite")
-    newTestSuite.addEventListener('click', async function (e) {
+    const newTestSuiteBtn = document.getElementById("newTestSuite")
+    newTestSuiteBtn.addEventListener('click', async function (e) {
         // Init an example test suite
         const exampleJson = {
             "tests": [
@@ -100,21 +99,16 @@ document.addEventListener('DOMContentLoaded', (event) => {
         newListItem.appendChild(newLink);
         sidebarList.appendChild(newListItem);
 
-
         newListItem.addEventListener('click', async function (e) {
-            showMainContent()
-            hideAlerts()
-            e.preventDefault();
-            await fetchTestSuiteDetails(newData.id);
+            await initNavLink(this, e)
         });
 
-        // updateMainContent(newData)
         await fetchTestSuiteDetails(newData.id)
         showMainContent()
     })
 
-    const updateTestSuite = document.getElementById("updateTestSuite")
-    updateTestSuite.addEventListener('click', async function (e) {
+    const updateTestSuiteBtn = document.getElementById("updateTestSuite")
+    updateTestSuiteBtn.addEventListener('click', async function (e) {
         e.preventDefault()
 
         const id = document.getElementById("testSuiteId").value
@@ -123,9 +117,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
         await updateTestSuiteDetails(id, name, config)
     })
-
 });
 
+// ***********************************************************************************
+// API CLIENT METHODS
+// ***********************************************************************************
 async function postNewTestSuite(name, testSuiteJson) {
     hideAlerts()
     try {
@@ -138,14 +134,15 @@ async function postNewTestSuite(name, testSuiteJson) {
                 }
             )
         })
-
-        const data = await response.json()
-        console.log(data)
-        return data
+        if (response.status !== 200) {
+            const resBody = await response.text()
+            console.error("Found error: " + response.status + " " + resBody)
+            return
+        }
+        return await response.json()
     } catch (e) {
         console.error("Cant post new test suite: ", e)
     }
-
 }
 
 async function deleteTestSuite(id) {
@@ -164,7 +161,11 @@ async function fetchTestSuiteDetails(id) {
         const response = await fetch(`/test-suites/${id}`, {
             method: "GET",
         })
-
+        if (response.status !== 200) {
+            const resBody = await response.text()
+            console.error("Found error: " + response.status + " " + resBody)
+            return
+        }
         const data = await response.json()
         console.log("Found test suite data: " + data)
         updateMainContent(data)
@@ -175,17 +176,15 @@ async function fetchTestSuiteDetails(id) {
 
 async function runTestSuite(id) {
     hideAlerts()
-
     try {
         const response = await fetch(`execute/run/${id}`)
         if (response.status !== 200) {
-            console.error("Status code is not 200 ", response.statusText)
+            const resBody = await response.text()
+            console.error("Found error: " + response.status + " " + resBody)
             return
         }
-
         const data = await response.json()
         console.log(data)
-
         updateMainContent(data)
     } catch (e) {
         console.error("Error running test suite: ", e)
@@ -205,11 +204,9 @@ async function updateTestSuiteDetails(id, name, config) {
                 }
             )
         })
-
         if (response.status !== 200) {
             console.error("Status code is not 200 ", response.statusText)
             const resBody = await response.text()
-            console.log(resBody)
             setAlert(resBody, "error-main")
             return
         }
@@ -222,6 +219,28 @@ async function updateTestSuiteDetails(id, name, config) {
     }
 }
 
+
+// ***********************************************************************************
+// UTILS
+// ***********************************************************************************
+function formatDuration(ms) {
+    return `${ms} ms`
+}
+
+function formatDate(date) {
+    if (date) {
+        return new Date(date).toLocaleString()
+    }
+    return ""
+}
+
+function formatOutputReport(report) {
+    return report.replace("\n", "<br>")
+}
+
+// ***********************************************************************************
+// HELPERS
+// ***********************************************************************************
 function updateMainContent(data) {
     const testSuiteName = document.getElementById("testSuiteName")
     const testSuiteId = document.getElementById("testSuiteId")
@@ -277,7 +296,6 @@ function updateMainContent(data) {
 }
 
 function renderLogs(logs) {
-    console.log(logs)
     const logContainer = document.getElementById('outputLogs');
     logContainer.innerHTML = '';
 
@@ -319,10 +337,6 @@ function renderLogs(logs) {
     });
 }
 
-function formatOutputReport(report) {
-    return report.replace("\n", "<br>")
-}
-
 function displayHistoryRunLog(logs) {
     const container = document.getElementById('runLogsContainer');
     container.innerHTML = '';
@@ -357,17 +371,12 @@ function displayHistoryRunLog(logs) {
     });
 }
 
-function formatDuration(ms) {
-    return `${ms} ms`
-}
-
-function formatDate(date) {
-    // return date.replace("T", " ")
-    if (date) {
-        return new Date(date).toLocaleString()
-    }
-
-    return ""
+async function initNavLink(element, e) {
+    showMainContent()
+    hideAlerts()
+    e.preventDefault();
+    const testSuiteId = element.getAttribute('data-id');
+    await fetchTestSuiteDetails(testSuiteId);
 }
 
 function updateSidebarTestSuiteName(id, newName) {
