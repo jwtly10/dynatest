@@ -1,6 +1,7 @@
 package dev.jwtly10.dynatest.parser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import dev.jwtly10.dynatest.models.ExpectedResponse;
 import dev.jwtly10.dynatest.models.Request;
 import dev.jwtly10.dynatest.models.TestRun;
 import dev.jwtly10.dynatest.models.TestSuite;
@@ -227,5 +228,48 @@ class JsonParserTest {
         System.out.println(actualTestRun.getSteps().get(0).getRequest().getJsonBody().get("address.city"));
         System.out.println(actualTestRun.getSteps().get(0).getRequest().getJsonBody().get("names"));
         // TODO: We dont handle json arrays very well. This is something I will need to implement
+    }
+
+    @Test
+    void canParseExpectedResponseValidationSchema() throws JsonProcessingException {
+        String schema = """
+                {
+                     "statusCode": 200,
+                     "validationSchema": {
+                       "type": "object",
+                       "properties": {
+                         "id": {
+                           "type": "string"
+                         },
+                         "name": {
+                           "type": "string"
+                         },
+                         "age": {
+                           "type": "number"
+                         },
+                         "address": {
+                           "type": "object",
+                           "properties": {
+                             "street": {
+                               "type": "string"
+                             },
+                             "city": {
+                               "type": "string"
+                             },
+                             "zipcode": {
+                               "type": "string"
+                             }
+                           },
+                           "required": ["street", "city", "zipcode"]
+                         },
+                         "tags": {
+                           "type": "array"
+                         }
+                       },
+                       "required": ["id", "name", "age", "address"]
+                     }
+                 }""";
+
+        ExpectedResponse re = JsonParser.fromJson(schema, ExpectedResponse.class);
     }
 }
