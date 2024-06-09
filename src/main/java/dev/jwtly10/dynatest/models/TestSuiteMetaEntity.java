@@ -24,6 +24,8 @@ public class TestSuiteMetaEntity {
     private int passCount;
     private int failCount;
 
+    private String lastRunLog;
+
     @Enumerated(EnumType.STRING)
     private Status lastOutcome;
 

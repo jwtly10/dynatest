@@ -7,6 +7,8 @@ import dev.jwtly10.dynatest.models.*;
 import dev.jwtly10.dynatest.util.FunctionHandler;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -65,7 +67,8 @@ public class TemplateParserTest {
         context.setVariable("token", "test_token");
         context.setVariable("email", "test_email@email.com");
 
-        Request parsedRequest = templateParser.parseRequest(req);
+        List<Log> logs = new ArrayList<>();
+        Request parsedRequest = templateParser.parseRequest(req, logs);
 
         assertEquals("Bearer test_token", parsedRequest.getHeader("Authorization"));
         assertEquals("test_email@email.com", parsedRequest.getJsonBody().get("email"));
@@ -95,7 +98,8 @@ public class TemplateParserTest {
         context.setVariable("token", "test_token");
         context.setEnvVariable("apiKey", "test_api_key");
 
-        Request parsedRequest = templateParser.parseRequest(req);
+        List<Log> logs = new ArrayList<>();
+        Request parsedRequest = templateParser.parseRequest(req, logs);
 
         assertEquals("Bearer test_token", parsedRequest.getHeader("Authorization"));
         assertEquals("test", parsedRequest.getJsonBody().get("email").toString().substring(0, 4));
@@ -127,7 +131,8 @@ public class TemplateParserTest {
         context.setEnvVariable("apiKey", "test_api_key");
         context.setVariable("prefix", "josh");
 
-        Request parsedRequest = templateParser.parseRequest(req);
+        List<Log> logs = new ArrayList<>();
+        Request parsedRequest = templateParser.parseRequest(req, logs);
 
         assertEquals("Bearer test_token", parsedRequest.getHeader("Authorization"));
         assertEquals("josh", parsedRequest.getJsonBody().get("prefixedEmail").toString().substring(0, 4));
@@ -155,7 +160,8 @@ public class TemplateParserTest {
 
         context.setVariable("name", "josh");
 
-        Request parsedRequest = templateParser.parseRequest(req);
+        List<Log> logs = new ArrayList<>();
+        Request parsedRequest = templateParser.parseRequest(req, logs);
         System.out.println(parsedRequest);
 
         int len = parsedRequest.getJsonBody().get("concatString").toString().length();
@@ -184,7 +190,8 @@ public class TemplateParserTest {
         // Missing value
         // context.setVariable("userId", "1");
 
-        assertThrows(TemplateParserException.class, () -> templateParser.parseRequest(req));
+        List<Log> logs = new ArrayList<>();
+        assertThrows(TemplateParserException.class, () -> templateParser.parseRequest(req, logs));
     }
 
     @Test
@@ -210,7 +217,8 @@ public class TemplateParserTest {
 
         context.setVariable("token", "test_token");
 
-        assertThrows(TemplateParserException.class, () -> templateParser.parseRequest(req));
+        List<Log> logs = new ArrayList<>();
+        assertThrows(TemplateParserException.class, () -> templateParser.parseRequest(req, logs));
     }
 
     @Test
@@ -237,7 +245,8 @@ public class TemplateParserTest {
 
         context.setVariable("token", "test_token");
 
-        assertThrows(TemplateParserException.class, () -> templateParser.parseRequest(req));
+        List<Log> logs = new ArrayList<>();
+        assertThrows(TemplateParserException.class, () -> templateParser.parseRequest(req, logs));
     }
 
 

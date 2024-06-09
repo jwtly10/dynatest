@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS test_suite_meta_tb
     pass_count           INTEGER DEFAULT 0,
     fail_count           INTEGER DEFAULT 0,
     last_outcome         TEXT,
+    last_run_log         TEXT,
     last_finished_run_at TEXT,
     created_at           TEXT    DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'utc')),
     updated_at           TEXT    DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'utc')),

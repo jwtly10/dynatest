@@ -41,7 +41,6 @@ public class SuiteService {
         List<TestSuiteRunLogEntity> testSuiteRunLogEntities = testSuiteRunLogService.getRunLogsForTestSuite(id);
         res.setRunLogs(testSuiteRunLogEntities);
 
-
         log.info("Found data for a test suite: " + res);
 
         return Optional.of(res);

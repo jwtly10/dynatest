@@ -7,6 +7,7 @@ import dev.jwtly10.dynatest.models.*;
 import dev.jwtly10.dynatest.util.FunctionHandler;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -20,16 +21,16 @@ public class TemplateParser {
         this.functionHandler = functionHandler;
     }
 
-    public Request parseRequest(Request request) throws TemplateParserException {
-        request.setUrl(parseUrl(request.getUrl()));
+    public Request parseRequest(Request request, List<Log> runLogs) throws TemplateParserException {
+        request.setUrl(parseUrl(request.getUrl(), runLogs));
         if (request.getQueryParams() != null) {
-            request.setQueryParams(parseQueryParams(request.getQueryParams()));
+            request.setQueryParams(parseQueryParams(request.getQueryParams(), runLogs));
         }
         if (request.getRequestHeaders() != null) {
-            request.setRequestHeaders(parseHeaders(request.getRequestHeaders()));
+            request.setRequestHeaders(parseHeaders(request.getRequestHeaders(), runLogs));
         }
         if (request.getBody() != null) {
-            request.setJsonBody(parseJsonBody(request.getBody()));
+            request.setJsonBody(parseJsonBody(request.getBody(), runLogs));
         }
         return request;
     }
@@ -75,27 +76,27 @@ public class TemplateParser {
         }
     }
 
-    private String parseUrl(String url) throws TemplateParserException {
-        return parseAndReplace(url);
+    private String parseUrl(String url, List<Log> runLogs) throws TemplateParserException {
+        return parseAndReplace(url, runLogs);
     }
 
-    private Headers parseHeaders(Headers headers) throws TemplateParserException {
+    private Headers parseHeaders(Headers headers, List<Log> runLogs) throws TemplateParserException {
         Map<String, String> originalHeaders = headers.getHeaders();
         for (Map.Entry<String, String> entry : originalHeaders.entrySet()) {
-            headers.setHeader(entry.getKey(), parseAndReplace(entry.getValue()));
+            headers.setHeader(entry.getKey(), parseAndReplace(entry.getValue(), runLogs));
         }
         return headers;
     }
 
-    private QueryParams parseQueryParams(QueryParams queryParams) throws TemplateParserException {
+    private QueryParams parseQueryParams(QueryParams queryParams, List<Log> runLogs) throws TemplateParserException {
         Map<String, String> originalParams = queryParams.getParams();
         for (Map.Entry<String, String> entry : originalParams.entrySet()) {
-            queryParams.setParam(entry.getKey(), parseAndReplace(entry.getValue()));
+            queryParams.setParam(entry.getKey(), parseAndReplace(entry.getValue(), runLogs));
         }
         return queryParams;
     }
 
-    private JsonBody parseJsonBody(JsonBody jsonBody) throws TemplateParserException {
+    private JsonBody parseJsonBody(JsonBody jsonBody, List<Log> runLogs) throws TemplateParserException {
         String jsonBodyInString = "";
         try {
             jsonBodyInString = JsonParser.toJson(jsonBody);
@@ -103,7 +104,7 @@ public class TemplateParser {
             throw new TemplateParserException("Unable to parse request JSON: " + e.getMessage());
         }
         log.debug("JsonBody was parsed into string: {}", jsonBodyInString);
-        String replacedJson = parseAndReplace(jsonBodyInString);
+        String replacedJson = parseAndReplace(jsonBodyInString, runLogs);
         log.debug("JSON of JsonBody was templated into: {}", replacedJson);
         try {
             return JsonParser.fromJson(replacedJson, JsonBody.class);
@@ -112,7 +113,7 @@ public class TemplateParser {
         }
     }
 
-    private String parseAndReplace(String template) throws TemplateParserException {
+    private String parseAndReplace(String template, List<Log> runLogs) throws TemplateParserException {
         log.info("Parsing template: {}", template);
         StringBuffer sb = new StringBuffer(template);
         int openBrace, closeBrace, nestedOpen, currentPos = 0;
@@ -137,21 +138,27 @@ public class TemplateParser {
 
                 // Recursively parse each argument
                 for (int i = 0; i < args.length; i++) {
-                    args[i] = parseAndReplace(args[i]);
+                    args[i] = parseAndReplace(args[i], runLogs);
                 }
 
                 log.info("Resolving function: '{}'", functionName);
+//                runLogs.add(Log.of(Type.INFO, "Resolving template function {}", functionName));
                 try {
                     replacement = functionHandler.callFunction(functionName, args);
+//                    runLogs.add(Log.of(Type.INFO, "Resolved template function {}", functionName));
                 } catch (Exception e) {
+//                    runLogs.add(Log.of(Type.ERROR, "Unable to resolve function {}: {}", functionName, e));
                     throw new TemplateParserException("Unable to invoke function '" + functionName + "'", e);
                 }
             } else {
                 log.info("Resolving variable: '{}'", key);
+//                runLogs.add(Log.of(Type.INFO, "Resolving variable {}", key));
                 try {
                     replacement = context.getValue(key);
+//                    runLogs.add(Log.of(Type.INFO, "Resolved variable {}", key));
                 } catch (NoSuchElementException e) {
-                    throw new TemplateParserException("'" + key + "', doesn't exist in the test context");
+//                    runLogs.add(Log.of(Type.ERROR, "Unable to resolve variable {}: {}", functionName, e));
+                    throw new TemplateParserException("'" + key + "' doesn't exist in the test runner variable context. Did you define this as a 'storedValue' in a previous request?");
                 }
             }
 

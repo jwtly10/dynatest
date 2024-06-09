@@ -23,17 +23,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/lint/lint.min.css" rel="stylesheet">
-
-    <style media="screen" type="text/css">
-        .editor {
-            height: 100%
-        }
-
-        .CodeMirror {
-            height: 100%
-        }
-    </style>
-
 </head>
 
 <body id="page-top">
@@ -291,7 +280,7 @@
                                     <h6 class="m-0 font-weight-bold text-primary">Output Logs</h6>
                                 </div>
                                 <div class="card-body d-flex flex-column">
-                                    <p>Logs</p>
+                                    <div class="log-container" id="outputLogs"></div>
                                 </div>
                             </div>
                         </div>
@@ -499,6 +488,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/lint/lint.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/lint/json-lint.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsonlint/1.6.0/jsonlint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+
 
 <script>
     let currentConfigEditor;
@@ -733,7 +724,7 @@
         const metaCreated = document.getElementById("metaCreated")
         const metaUpdated = document.getElementById("metaUpdated")
 
-        const runLogs = document.getElementById("runLogs")
+        const outputLogs = document.getElementById("outputLogs")
 
         try {
             currentConfigEditor.setValue(JSON.stringify(JSON.parse(data.entity.configuration), null, 2))
@@ -752,10 +743,76 @@
         metaCreated.textContent = formatDate(data.entity.createdAt)
         metaUpdated.textContent = formatDate(data.entity.updatedAt)
 
-        displayRunLogs(data.runLogs)
+        displayHistoryRunLog(data.runLogs)
+
+//         const logs = [
+//             {type: 'INFO', message: 'This is some more data'},
+//             {type: 'INFO', message: 'This is even some more data'},
+//             {type: 'INFO', message: ''},
+//             {type: 'INFO', message: 'Response from Step1:'},
+//             {
+//                 type: 'JSON', message: `{
+//   "tests": [
+//     {
+//       "name": "New Test",
+//       "description": "Example simple test",
+//       "steps": [
+//         {
+//           "stepName": "Make a request",
+//           "request": {
+//             "method": "GET",
+//             "url": "https://httpbin.org/get",
+//             "headers": {
+//               "Content-Type": "application/json",
+//               "Accept": "application/json"
+//             }
+//           }
+//         }
+//       ]
+//     }
+//   ]
+// }`
+//             },
+//             {type: 'INFO', message: ''},
+//             {type: 'INFO', message: ''},
+//             {type: 'ERROR', message: 'This failed because of x y z'}
+//         ];
+
+        try {
+            const logs = JSON.parse(data.metaData.lastRunLog)
+            renderLogs(logs)
+        } catch (e) {
+            console.error("Failed to parse JSON logs from output logs")
+        }
     }
 
-    function displayRunLogs(logs) {
+    function renderLogs(logs) {
+        console.log(logs)
+        const logContainer = document.getElementById('outputLogs');
+        logContainer.innerHTML = '';
+
+        logs.forEach(log => {
+            const logElement = document.createElement('div');
+            if (log.type === 'INFO') {
+                logElement.className = 'log-info';
+                logElement.textContent = `${log.type}: ${log.message}`;
+            } else if (log.type === 'ERROR') {
+                logElement.className = 'log-error';
+                logElement.textContent = `${log.type}: ${log.message}`;
+            } else if (log.type === 'JSON') {
+                logElement.className = 'log-json';
+                try {
+                    logElement.textContent = JSON.stringify(JSON.parse(log.message), null, 2)
+                } catch (e) {
+                    console.error("Failed to parse JSON in logs: ", e)
+                    logElement.textContent = log.message;
+                }
+            }
+            logContainer.appendChild(logElement);
+        });
+    }
+
+    function displayHistoryRunLog(logs) {
         const container = document.getElementById('runLogsContainer');
         container.innerHTML = '';
 
@@ -777,14 +834,6 @@
 
     function formatDuration(ms) {
         return `${ms} ms`
-        // switch (ms) {
-        //     case 0:
-        //         return "less than 1 second"
-        //     case 1:
-        //         return "1 second"
-        //     default:
-        //         return `${ms} seconds`
-        // }
     }
 
     function formatDate(date) {

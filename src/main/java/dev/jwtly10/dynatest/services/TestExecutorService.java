@@ -2,13 +2,18 @@ package dev.jwtly10.dynatest.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.jwtly10.dynatest.enums.Status;
+import dev.jwtly10.dynatest.enums.Type;
 import dev.jwtly10.dynatest.executor.TestExecutor;
+import dev.jwtly10.dynatest.models.Log;
 import dev.jwtly10.dynatest.models.TestSuite;
 import dev.jwtly10.dynatest.models.TestSuiteEntity;
 import dev.jwtly10.dynatest.models.TestSuiteRunLogEntity;
 import dev.jwtly10.dynatest.parser.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -45,10 +50,20 @@ public class TestExecutorService {
         TestSuiteRunLogEntity runLog = testSuiteRunLogService.startRunForTestSuite(id);
 
         // 5. We run the test using the TestExecutor.class
-        executor.runTestSuite(testSuite);
+        List<Log> runLogs = new ArrayList<>();
+        runLogs.add(Log.of(Type.INFO, "Starting test execution for test suite %s", id));
+        executor.runTestSuite(testSuite, runLogs);
 
         // 6. It needs to throw any errors properly (but for now we can just assume it works or nothing happens
         testSuiteRunLogService.finishRun(runLog.getId());
-        testSuiteMetaService.saveMetaDataForTestSuiteRun(entity.getId(), Status.SUCCESS);
+        runLogs.add(Log.of(Type.INFO, "Finished test execution for test suite %s", id));
+        // Convert runLogs to string
+        String logs = "";
+        try {
+            logs = JsonParser.toJson(runLogs);
+        } catch (JsonProcessingException e) {
+            log.error("Error parsing JSON Logs", e);
+        }
+        testSuiteMetaService.saveMetaDataForTestSuiteRun(entity.getId(), Status.SUCCESS, logs);
     }
 }

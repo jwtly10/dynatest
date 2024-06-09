@@ -1,3 +1,39 @@
+/* Custom styles */
+.editor {
+    height: 100%
+}
+
+.CodeMirror {
+    height: 100%
+}
+
+.log-container {
+    max-height: 250px;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+.log-info {
+    color: black;
+}
+
+.log-error {
+    color: red;
+}
+
+.log-json {
+    background-color: #e8e8e8;
+    padding: 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    white-space: pre-wrap;
+    overflow-x: auto;
+}
+
 /*!
  * Start Bootstrap - SB Admin 2 v4.1.3 (https://startbootstrap.com/theme/sb-admin-2)
  * Copyright 2013-2021 Start Bootstrap

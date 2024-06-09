@@ -31,6 +31,7 @@ public class TestSuiteMetaService {
             testSuiteMetaEntity.setRuns(0);
             testSuiteMetaEntity.setPassCount(0);
             testSuiteMetaEntity.setFailCount(0);
+            testSuiteMetaEntity.setLastRunLog("");
             testSuiteMetaEntity.setCreatedAt(LocalDateTime.now());
             testSuiteMetaEntity.setUpdatedAt(LocalDateTime.now());
         } else {
@@ -41,7 +42,7 @@ public class TestSuiteMetaService {
         return testSuiteMetaRepository.save(testSuiteMetaEntity);
     }
 
-    public TestSuiteMetaEntity saveMetaDataForTestSuiteRun(int testSuiteId, Status result) {
+    public TestSuiteMetaEntity saveMetaDataForTestSuiteRun(int testSuiteId, Status result, String lastRunLog) {
         // Either update existing row or create new one
         TestSuiteMetaEntity testSuiteMetaEntity = testSuiteMetaRepository.findByTestSuiteId(testSuiteId).orElse(null);
         if (testSuiteMetaEntity == null) {
@@ -72,6 +73,7 @@ public class TestSuiteMetaService {
         }
 
         testSuiteMetaEntity.setLastFinishedRunAt(LocalDateTime.now());
+        testSuiteMetaEntity.setLastRunLog(lastRunLog);
         testSuiteMetaEntity.setUpdatedAt(LocalDateTime.now());
         log.info("Saving meta run log for test suite: " + testSuiteMetaEntity);
         return testSuiteMetaRepository.save(testSuiteMetaEntity);

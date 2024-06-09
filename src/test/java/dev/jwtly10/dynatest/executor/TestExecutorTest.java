@@ -1,10 +1,7 @@
 package dev.jwtly10.dynatest.executor;
 
 import dev.jwtly10.dynatest.config.TemplateParserConfig;
-import dev.jwtly10.dynatest.models.JsonBody;
-import dev.jwtly10.dynatest.models.Request;
-import dev.jwtly10.dynatest.models.Response;
-import dev.jwtly10.dynatest.models.TestSuite;
+import dev.jwtly10.dynatest.models.*;
 import dev.jwtly10.dynatest.parser.JsonParser;
 import dev.jwtly10.dynatest.services.HttpClientService;
 import dev.jwtly10.dynatest.util.FunctionHandler;
@@ -16,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -92,7 +90,8 @@ class TestExecutorTest {
         TemplateParserConfig config = new TemplateParserConfig(handler);
         TestExecutor executor = new TestExecutor(config, mockClient);
 
-        executor.runTestSuite(testSuite);
+        List<Log> logs = new ArrayList<>();
+        executor.runTestSuite(testSuite, logs);
 
         verify(mockClient, times(2)).makeRequest(requestCaptor.capture());
         List<Request> capturedRequests = requestCaptor.getAllValues();
