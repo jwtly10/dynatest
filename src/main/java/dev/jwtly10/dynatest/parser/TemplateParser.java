@@ -2,6 +2,7 @@ package dev.jwtly10.dynatest.parser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.jwtly10.dynatest.context.TestContext;
+import dev.jwtly10.dynatest.enums.Type;
 import dev.jwtly10.dynatest.exceptions.TemplateParserException;
 import dev.jwtly10.dynatest.models.*;
 import dev.jwtly10.dynatest.util.FunctionHandler;
@@ -142,22 +143,20 @@ public class TemplateParser {
                 }
 
                 log.info("Resolving function: '{}'", functionName);
-//                runLogs.add(Log.of(Type.INFO, "Resolving template function {}", functionName));
+                runLogs.add(Log.of(Type.INFO, "Resolving template function '%s()'", functionName));
                 try {
                     replacement = functionHandler.callFunction(functionName, args);
-//                    runLogs.add(Log.of(Type.INFO, "Resolved template function {}", functionName));
                 } catch (Exception e) {
-//                    runLogs.add(Log.of(Type.ERROR, "Unable to resolve function {}: {}", functionName, e));
+                    runLogs.add(Log.of(Type.ERROR, "Unable to resolve function '%s'", functionName));
                     throw new TemplateParserException("Unable to invoke function '" + functionName + "'", e);
                 }
             } else {
                 log.info("Resolving variable: '{}'", key);
-//                runLogs.add(Log.of(Type.INFO, "Resolving variable {}", key));
+                runLogs.add(Log.of(Type.INFO, "Resolving variable '%s", key));
                 try {
                     replacement = context.getValue(key);
-//                    runLogs.add(Log.of(Type.INFO, "Resolved variable {}", key));
                 } catch (NoSuchElementException e) {
-//                    runLogs.add(Log.of(Type.ERROR, "Unable to resolve variable {}: {}", functionName, e));
+                    runLogs.add(Log.of(Type.ERROR, "Unable to resolve variable '%s'", key));
                     throw new TemplateParserException("'" + key + "' doesn't exist in the test runner variable context. Did you define this as a 'storedValue' in a previous request?");
                 }
             }

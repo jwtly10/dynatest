@@ -3,6 +3,7 @@ package dev.jwtly10.dynatest.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.jwtly10.dynatest.enums.Status;
 import dev.jwtly10.dynatest.enums.Type;
+import dev.jwtly10.dynatest.exceptions.TestExecutionException;
 import dev.jwtly10.dynatest.executor.TestExecutor;
 import dev.jwtly10.dynatest.models.Log;
 import dev.jwtly10.dynatest.models.TestSuite;
@@ -52,18 +53,28 @@ public class TestExecutorService {
         // 5. We run the test using the TestExecutor.class
         List<Log> runLogs = new ArrayList<>();
         runLogs.add(Log.of(Type.INFO, "Starting test execution for test suite %s", id));
-        executor.runTestSuite(testSuite, runLogs);
-
-        // 6. It needs to throw any errors properly (but for now we can just assume it works or nothing happens
-        testSuiteRunLogService.finishRun(runLog.getId());
-        runLogs.add(Log.of(Type.INFO, "Finished test execution for test suite %s", id));
-        // Convert runLogs to string
-        String logs = "";
         try {
-            logs = JsonParser.toJson(runLogs);
+            executor.runTestSuite(testSuite, runLogs);
+            runLogs.add(Log.of(Type.INFO, "Finished test execution for test suite %s", id));
+            testSuiteRunLogService.finishRun(runLog.getId());
+            handleOutcome(entity, Status.SUCCESS, runLogs);
+        } catch (TestExecutionException e) {
+            runLogs.add(Log.of(Type.ERROR, "Test execution failed for test suite %s", id));
+            testSuiteRunLogService.failRun(runLog.getId());
+            handleOutcome(entity, Status.FAIL, runLogs);
+        }
+
+    }
+
+    private void handleOutcome(TestSuiteEntity entity, Status outcome, List<Log> logs) {
+        // Convert runLogs to string
+        String stringLogs = "";
+        try {
+            stringLogs = JsonParser.toJson(logs);
         } catch (JsonProcessingException e) {
             log.error("Error parsing JSON Logs", e);
         }
-        testSuiteMetaService.saveMetaDataForTestSuiteRun(entity.getId(), Status.SUCCESS, logs);
+        testSuiteMetaService.saveMetaDataForTestSuiteRun(entity.getId(), outcome, stringLogs);
+
     }
 }

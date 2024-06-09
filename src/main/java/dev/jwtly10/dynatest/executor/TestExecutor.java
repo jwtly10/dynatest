@@ -28,13 +28,13 @@ public class TestExecutor {
         this.client = client;
     }
 
-    public void runTestSuite(TestSuite testSuite, List<Log> runLogs) {
+    public void runTestSuite(TestSuite testSuite, List<Log> runLogs) throws TestExecutionException {
         for (TestRun test : testSuite.getTests()) {
             executeTest(test, runLogs);
         }
     }
 
-    private void executeTest(TestRun test, List<Log> runLogs) {
+    private void executeTest(TestRun test, List<Log> runLogs) throws TestExecutionException {
         log.info("Executing test '{}'", test.getName());
         runLogs.add(Log.of(Type.INFO, "Executing test '%s'", test.getName()));
         TestContext context = new TestContext();
@@ -49,7 +49,7 @@ public class TestExecutor {
                 // Here is where we do validation on the stuff we expected in the step
             } catch (TestExecutionException e) {
                 log.error("Error executing step '{}'", step.getStepName(), e);
-                break;
+                throw new TestExecutionException("Step '" + step.getStepName() + "' failed with error: ", e);
             }
         }
     }

@@ -744,40 +744,6 @@
         metaUpdated.textContent = formatDate(data.entity.updatedAt)
 
         displayHistoryRunLog(data.runLogs)
-
-//         const logs = [
-//             {type: 'INFO', message: 'This is some more data'},
-//             {type: 'INFO', message: 'This is even some more data'},
-//             {type: 'INFO', message: ''},
-//             {type: 'INFO', message: 'Response from Step1:'},
-//             {
-//                 type: 'JSON', message: `{
-//   "tests": [
-//     {
-//       "name": "New Test",
-//       "description": "Example simple test",
-//       "steps": [
-//         {
-//           "stepName": "Make a request",
-//           "request": {
-//             "method": "GET",
-//             "url": "https://httpbin.org/get",
-//             "headers": {
-//               "Content-Type": "application/json",
-//               "Accept": "application/json"
-//             }
-//           }
-//         }
-//       ]
-//     }
-//   ]
-// }`
-//             },
-//             {type: 'INFO', message: ''},
-//             {type: 'INFO', message: ''},
-//             {type: 'ERROR', message: 'This failed because of x y z'}
-//         ];
-
         try {
             const logs = JSON.parse(data.metaData.lastRunLog)
             renderLogs(logs)

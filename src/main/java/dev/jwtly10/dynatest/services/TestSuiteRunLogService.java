@@ -44,7 +44,7 @@ public class TestSuiteRunLogService {
         return testSuiteRunLogRepository.save(entity);
     }
 
-    public TestSuiteRunLogEntity failRun(int runLogId, String errorMessage) {
+    public TestSuiteRunLogEntity failRun(int runLogId) {
         TestSuiteRunLogEntity entity = testSuiteRunLogRepository.findById(runLogId).orElse(null);
         if (entity == null) throw new RuntimeException("Cant fail a run that doesnt exist");
 
@@ -53,7 +53,6 @@ public class TestSuiteRunLogService {
         entity.setEndTime(LocalDateTime.now());
         Duration duration = Duration.between(entity.getStartTime(), entity.getEndTime());
         entity.setDuration(duration.getSeconds());
-        entity.setErrorMessage(errorMessage);
         entity.setUpdatedAt(LocalDateTime.now());
         log.info("Saving failed test run log" + entity.toString());
         return testSuiteRunLogRepository.save(entity);
