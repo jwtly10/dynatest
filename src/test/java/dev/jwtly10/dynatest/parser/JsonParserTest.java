@@ -10,6 +10,7 @@ import org.springframework.http.HttpMethod;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -28,10 +29,10 @@ class JsonParserTest {
                             "method": "GET",
                             "url": "https://api.example.com/resource",
                             "headers": {
-                              "Authorization": "Bearer {token}"
+                              "Authorization": "Bearer ${token}"
                             },
                             "queryParams": {
-                              "id": "{previousValue}"
+                              "id": "${previousValue}"
                             },
                             "body": {
                               "name": "test",
@@ -62,12 +63,13 @@ class JsonParserTest {
             Request request = step.getRequest();
             assertEquals(HttpMethod.GET, request.getMethod());
             assertEquals("https://api.example.com/resource", request.getUrl());
-            assertEquals("Bearer {token}", request.getHeader("Authorization"));
-            assertEquals("{previousValue}", request.getParam("id"));
+            assertEquals("Bearer ${token}", request.getHeader("Authorization"));
+            assertEquals("${previousValue}", request.getParam("id"));
             assertEquals("test", request.getJsonBody().get("name"));
             assertEquals(10, request.getJsonBody().get("age"));
-            assertEquals("London", request.getJsonBody().get("address.city"));
-            assertEquals("UK", request.getJsonBody().get("address.country"));
+            var addr = (Map<String, Object>) request.getJsonBody().get("address");
+            assertEquals("London", addr.get("city"));
+            assertEquals("UK", addr.get("country"));
         });
     }
 

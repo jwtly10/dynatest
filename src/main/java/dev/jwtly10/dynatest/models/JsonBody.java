@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 @Data
 @AllArgsConstructor
@@ -25,15 +24,16 @@ public class JsonBody {
 
     @JsonAnySetter
     public void setBodyData(String key, Object value) {
-        if (value instanceof Map) {
-            if (((Map<?, ?>) value).isEmpty()) {
-                bodyData.put(key, new TreeMap<>());
-            } else {
-                flattenMap(key, (Map<String, Object>) value);
-            }
-        } else {
-            bodyData.put(key, value);
-        }
+        bodyData.put(key, value);
+//        if (value instanceof Map) {
+//            if (((Map<?, ?>) value).isEmpty()) {
+//                bodyData.put(key, new TreeMap<>());
+//            } else {
+//                flattenMap(key, (Map<String, Object>) value);
+//            }
+//        } else {
+//            bodyData.put(key, value);
+//        }
     }
 
     // Helper method to flatten the map

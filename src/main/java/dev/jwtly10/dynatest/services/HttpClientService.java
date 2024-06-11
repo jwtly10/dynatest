@@ -40,6 +40,8 @@ public class HttpClientService implements HttpService {
         UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(request.getUrl());
         queryParams.forEach(urlBuilder::queryParam);
 
+        log.debug(request.getJsonBody().toString());
+
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request.getJsonBody(), headers);
 
         ResponseEntity<String> res = null;

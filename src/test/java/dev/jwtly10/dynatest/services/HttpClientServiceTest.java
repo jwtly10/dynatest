@@ -45,8 +45,10 @@ public class HttpClientServiceTest {
 
         assertEquals(200, res.getStatusCode());
         assertNotNull(res.getHeaders());
-        assertEquals("1", res.getJsonBody().get("args.id"));
-        assertEquals("2", res.getJsonBody().get("args.page"));
+
+        var args = (Map<String, Object>) res.getJsonBody().get("args");
+        assertEquals("1", args.get("id"));
+        assertEquals("2", args.get("page"));
     }
 
     @Test
@@ -69,7 +71,8 @@ public class HttpClientServiceTest {
 
         assertEquals(200, res.getStatusCode());
         assertNotNull(res.getHeaders());
-        assertEquals("unit_test", res.getJsonBody().get("json.name"));
+        var json = (Map<String, Object>) res.getJsonBody().get("json");
+        assertEquals("unit_test", json.get("name"));
     }
 
     @Test
