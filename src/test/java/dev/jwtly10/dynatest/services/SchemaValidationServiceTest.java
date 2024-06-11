@@ -144,7 +144,7 @@ public class SchemaValidationServiceTest {
     }
 
     @Test
-    void testThrowsWhenRequiredMissing() {
+    void testThrowsWhenRequiredMissing() throws Exception {
         String schema = """
                 {
                        "type": "object",

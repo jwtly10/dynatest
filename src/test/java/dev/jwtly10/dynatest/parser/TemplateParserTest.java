@@ -84,7 +84,7 @@ public class TemplateParserTest {
         FunctionHandler handler = new FunctionHandler();
         TemplateParser templateParser = new TemplateParser(context, handler);
 
-        templateParser.setStoredValues(res, vals);
+        templateParser.setStoredValues(res, vals, new ArrayList<>());
 
         assertEquals("3", context.getValue("id"));
         assertEquals("london", context.getValue("city"));

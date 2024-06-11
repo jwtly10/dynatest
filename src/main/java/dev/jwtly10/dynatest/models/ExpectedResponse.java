@@ -1,6 +1,7 @@
 package dev.jwtly10.dynatest.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.List;
@@ -18,7 +19,8 @@ public class ExpectedResponse {
 
         @JsonInclude(JsonInclude.Include.NON_NULL)
         private Map<String, Property> properties;
-        @JsonInclude(JsonInclude.Include.NON_NULL)
+
+        @JsonProperty(required = true)
         private List<String> required;
     }
 

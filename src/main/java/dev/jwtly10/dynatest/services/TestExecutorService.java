@@ -60,14 +60,13 @@ public class TestExecutorService {
         runLogs.add(Log.of(Type.INFO, "Starting test execution for test suite '%s'", entity.getName()));
         try {
             executor.runTestSuite(testSuite, runLogs);
-            runLogs.add(Log.of(Type.PASS, "Test execution PASSED for test suite '%s'", entity.getName()));
+            runLogs.add(Log.of(Type.TEST_PASS, "Test execution PASSED for test suite '%s'", entity.getName()));
 
             // Some nice logs to show processes ran
             runLogs.add(Log.of(Type.OUTPUT_REPORT, "Ran %s tests!", testSuite.getTests().size()));
             testSuite.getTests().forEach((test) -> {
-                runLogs.add(Log.of(Type.OUTPUT_REPORT, "Test '%s' had %s step(s)", test.getName(), testSuite.getTests().size()));
+                runLogs.add(Log.of(Type.OUTPUT_REPORT, "Test '%s' had %s step(s)", test.getName(), test.getSteps().size()));
             });
-
             testSuiteRunLogService.finishRun(runLog.getId());
             handleOutcome(entity, Status.SUCCESS, runLogs);
         } catch (TestExecutionException e) {

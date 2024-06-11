@@ -66,8 +66,8 @@ public class TestExecutor {
                     runLogs.add(Log.of(Type.DEBUG, "Response passed validation schema"));
                 } else {
                     runLogs.add(Log.of(Type.WARN, "No validation schema found"));
-
                 }
+                runLogs.add(Log.of(Type.STEP_PASS, "STEP PASSED", step.getStepName()));
             } catch (TestExecutionException e) {
                 log.error("Error executing step '{}'", step.getStepName(), e);
                 throw new TestExecutionException("Step '" + step.getStepName() + "' failed with error: ", e);
@@ -111,7 +111,7 @@ public class TestExecutor {
             }
 
             // Set context from stored values
-            templateParser.setStoredValues(res, req.getStoreValues());
+            templateParser.setStoredValues(res, req.getStoreValues(), runLogs);
 
             return res;
         } catch (RestClientException | TemplateParserException e) {

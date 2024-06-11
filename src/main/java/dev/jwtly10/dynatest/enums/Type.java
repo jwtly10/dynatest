@@ -5,7 +5,8 @@ public enum Type {
     ERROR,
     DEBUG,
     FAIL,
-    PASS,
+    TEST_PASS,
+    STEP_PASS,
     JSON,
     WARN,
     OUTPUT_REPORT

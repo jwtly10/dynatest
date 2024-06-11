@@ -36,7 +36,7 @@ public class TemplateParser {
         return request;
     }
 
-    public void setStoredValues(Response response, StoreValues storeValues) throws TemplateParserException {
+    public void setStoredValues(Response response, StoreValues storeValues, List<Log> runLogs) throws TemplateParserException {
         // For now we only support the response body, but this is built in a way it can be extended
         // Just need to add a parser for the field
 
@@ -51,6 +51,7 @@ public class TemplateParser {
 
         for (Map.Entry<String, String> entry : vals.entrySet()) {
             log.info("Resolving stored value '{}'", entry.getValue());
+            runLogs.add(Log.of(Type.DEBUG, "Resolving stored value '%s'", entry.getValue()));
             String[] params = entry.getValue().split("\\.", 2);
             for (int i = 0; i < params.length; i++) {
                 params[i] = params[i].trim();
@@ -63,6 +64,7 @@ public class TemplateParser {
                     // TODO: Better way to do this? It should be 'safe' but wont be best UX
                     String val = body.get(params[1]).toString();
                     log.debug("Found '{}'", val);
+                    runLogs.add(Log.of(Type.DEBUG, "Found '%s'", val));
 
                     if (val != null) {
                         context.setVariable(entry.getKey(), val);
