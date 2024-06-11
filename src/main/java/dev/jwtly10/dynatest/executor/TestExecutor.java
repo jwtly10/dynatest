@@ -44,6 +44,13 @@ public class TestExecutor {
         runLogs.add(Log.of(Type.INFO, "Executing test '%s'", test.getName()));
         TestContext context = new TestContext();
         TemplateParser templateParser = templateParserConfig.createTemplateParser(context);
+        // Set local vars and environment vars
+        try {
+            templateParser.setVars(test, runLogs);
+        } catch (TemplateParserException e) {
+            log.error("Error parsing local vars", e);
+            throw new TestExecutionException(e.getMessage(), e);
+        }
 
         for (Step step : test.getSteps()) {
             try {
@@ -56,7 +63,7 @@ public class TestExecutor {
                 if (step.getExpectedResponse() != null) {
                     log.debug("Expected response : {}", step.getExpectedResponse());
                     validator.validateResponse(res, step.getExpectedResponse());
-                    runLogs.add(Log.of(Type.INFO, "Response passed validation schema"));
+                    runLogs.add(Log.of(Type.DEBUG, "Response passed validation schema"));
                 } else {
                     runLogs.add(Log.of(Type.WARN, "No validation schema found"));
 
@@ -90,7 +97,7 @@ public class TestExecutor {
 
     private Response doRequest(Request req, TemplateParser templateParser, List<Log> runLogs) throws TestExecutionException {
         log.debug("Executing request '{}'", req);
-        runLogs.add(Log.of(Type.INFO, "Executing request"));
+        runLogs.add(Log.of(Type.DEBUG, "Executing request"));
         try {
             Response res = client.makeRequest(req);
             runLogs.add(Log.of(Type.INFO, "Got response with status: %s", res.getStatusCode()));

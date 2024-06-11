@@ -14,6 +14,53 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TemplateParserTest {
+
+    @Test
+    public void testCanStoreInitialLocalVarInTest() throws JsonProcessingException, TemplateParserException {
+        String json = """
+                {
+                      "name": "Test Name",
+                      "vars": {
+                        "url": "https://www.httpbin.com/get"
+                      },
+                      "description": "Description of test",
+                      "steps": [
+                        {
+                          "stepName": "Step",
+                          "request": {
+                            "method": "GET",
+                            "url": "${url}",
+                            "headers": {
+                              "Authorization": "Bearer token"
+                            },
+                            "body": {
+                              "name": "test",
+                              "age": 10,
+                              "address": {
+                                  "city": "London",
+                                  "country": "UK"
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                """;
+
+        TestRun test = JsonParser.fromJson(json, TestRun.class);
+
+        TestContext context = new TestContext();
+        FunctionHandler handler = new FunctionHandler();
+        TemplateParser templateParser = new TemplateParser(context, handler);
+
+        templateParser.setVars(test, new ArrayList<>());
+        assertEquals("https://www.httpbin.com/get", context.getValue("url"));
+
+        Request parsedReq = templateParser.parseRequest(test.getSteps().get(0).getRequest(), new ArrayList<>());
+
+        assertEquals("https://www.httpbin.com/get", parsedReq.getUrl());
+    }
+
     @Test
     public void testCanStoreResponseVariable() throws RuntimeException, TemplateParserException {
         JsonBody body = new JsonBody();
@@ -249,5 +296,44 @@ public class TemplateParserTest {
         assertThrows(TemplateParserException.class, () -> templateParser.parseRequest(req, logs));
     }
 
+    @Test
+    public void testThrowsWhenLocalVarsCallInvalidFunction() throws JsonProcessingException, TemplateParserException {
+        String json = """
+                {
+                      "name": "Test Name",
+                      "vars": {
+                        "url": "${INVALID}"
+                      },
+                      "description": "Description of test",
+                      "steps": [
+                        {
+                          "stepName": "Step",
+                          "request": {
+                            "method": "GET",
+                            "url": "${url}",
+                            "headers": {
+                              "Authorization": "Bearer token"
+                            },
+                            "body": {
+                              "name": "test",
+                              "age": 10,
+                              "address": {
+                                  "city": "London",
+                                  "country": "UK"
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                """;
 
+        TestRun test = JsonParser.fromJson(json, TestRun.class);
+
+        TestContext context = new TestContext();
+        FunctionHandler handler = new FunctionHandler();
+        TemplateParser templateParser = new TemplateParser(context, handler);
+
+        assertThrows(TemplateParserException.class, () -> templateParser.setVars(test, new ArrayList<>()));
+    }
 }

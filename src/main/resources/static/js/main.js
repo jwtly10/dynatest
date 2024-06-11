@@ -316,13 +316,16 @@ function renderLogs(logs) {
         const logElement = document.createElement('div');
         if (log.type === 'INFO') {
             logElement.className = 'log-info';
-            logElement.textContent = `${log.type}: ${log.message}`;
+            logElement.innerHTML = `<b>${log.type}:</b> ${log.message}`;
         } else if (log.type === 'ERROR') {
             logElement.className = 'log-error';
-            logElement.textContent = `${log.type}: ${log.message}`;
+            logElement.innerHTML = `<b>${log.type}:</b> ${log.message}`;
+        } else if (log.type === 'DEBUG') {
+            logElement.className = 'log-debug';
+            logElement.innerHTML = `<b>${log.type}:</b> ${log.message}`;
         } else if (log.type === 'WARN') {
             logElement.className = 'log-warn';
-            logElement.textContent = `${log.type}: ${log.message}`;
+            logElement.innerHTML = `<b>${log.type}:</b> ${log.message}`;
         } else if (log.type === 'PASS') {
             logElement.className = 'log-pass';
             logElement.innerHTML = `
@@ -343,7 +346,7 @@ function renderLogs(logs) {
         } else if (log.type === 'JSON') {
             logElement.className = 'log-json';
             try {
-                logElement.textContent = JSON.stringify(JSON.parse(log.message), null, 2)
+                logElement.innerHTML = `<pre><code>${JSON.stringify(JSON.parse(log.message), null, 2)}</code></pre>`
             } catch (e) {
                 console.error("Failed to parse JSON in logs: ", e)
                 logElement.textContent = log.message;
@@ -352,6 +355,7 @@ function renderLogs(logs) {
 
         logElement.className = `${logElement.className} mb-1`
         logContainer.appendChild(logElement);
+        logContainer.scrollTop = logContainer.scrollHeight;
     });
 }
 

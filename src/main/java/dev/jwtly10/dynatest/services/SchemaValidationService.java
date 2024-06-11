@@ -24,18 +24,20 @@ public class SchemaValidationService {
             throw new SchemaValidationException("Response code mismatch: " + response.getStatusCode() + "!=" + expected.getStatusCode());
         }
 
-        String schemaString;
-        try {
-            schemaString = JsonParser.toJson(expected.getValidationSchema());
-        } catch (JsonProcessingException e) {
-            log.error("This shouldn't happen - unable to parse validation schema from ExpectedJson object", e);
-            throw new SchemaValidationException("Unable to parse json from validation schema", e);
-        }
+        if (expected.getValidationSchema() != null) {
+            String schemaString;
+            try {
+                schemaString = JsonParser.toJson(expected.getValidationSchema());
+            } catch (JsonProcessingException e) {
+                log.error("This shouldn't happen - unable to parse validation schema from ExpectedJson object", e);
+                throw new SchemaValidationException("Unable to parse json from validation schema", e);
+            }
 
-        try {
-            validateSchema(schemaString, response.getRawBody());
-        } catch (Exception e) {
-            throw new SchemaValidationException("Failed to validate the schema: " + e.getMessage());
+            try {
+                validateSchema(schemaString, response.getRawBody());
+            } catch (Exception e) {
+                throw new SchemaValidationException("Failed to validate the schema: " + e.getMessage());
+            }
         }
     }
 

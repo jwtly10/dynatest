@@ -9,12 +9,14 @@ public class TemplateFunctions {
         return prefix + System.currentTimeMillis() + "@mailinator.com";
     }
 
-    public static String hash(String timestamp, String key) {
-        return "hash";
+    public static String hash(String key, String timestamp) {
+        String hash = SHA512Hash.getSHA512Hash(key + timestamp);
+        return hash.toUpperCase();
     }
 
     public static String now() {
-        return String.valueOf(System.currentTimeMillis());
+        // Get current epoch in seconds
+        return String.valueOf(System.currentTimeMillis() / 1000);
     }
 
     public static String concat(String a, String b) {

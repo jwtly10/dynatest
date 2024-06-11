@@ -97,6 +97,13 @@ public class TemplateParser {
         return queryParams;
     }
 
+    private Map<String, String> parseVars(Map<String, String> vars, List<Log> runLogs) throws TemplateParserException {
+        for (Map.Entry<String, String> entry : vars.entrySet()) {
+            vars.put(entry.getKey(), parseAndReplace(entry.getValue(), runLogs));
+        }
+        return vars;
+    }
+
     private JsonBody parseJsonBody(JsonBody jsonBody, List<Log> runLogs) throws TemplateParserException {
         String jsonBodyInString = "";
         try {
@@ -143,7 +150,7 @@ public class TemplateParser {
                 }
 
                 log.info("Resolving function: '{}'", functionName);
-                runLogs.add(Log.of(Type.INFO, "Resolving template function '%s'", functionName));
+                runLogs.add(Log.of(Type.DEBUG, "Resolving template function '%s'", functionName));
                 try {
                     replacement = functionHandler.callFunction(functionName, args);
                 } catch (Exception e) {
@@ -151,7 +158,7 @@ public class TemplateParser {
                 }
             } else {
                 log.info("Resolving variable: '{}'", key);
-                runLogs.add(Log.of(Type.INFO, "Resolving variable '%s'", key));
+                runLogs.add(Log.of(Type.DEBUG, "Resolving variable '%s'", key));
                 try {
                     replacement = context.getValue(key);
                 } catch (NoSuchElementException e) {
@@ -179,4 +186,19 @@ public class TemplateParser {
         return args;
     }
 
+    public void setVars(TestRun test, List<Log> runLogs) throws TemplateParserException {
+        // Sets local environment vars
+        if (test.getVars() == null) {
+            log.info("No local vars to store");
+            runLogs.add(Log.of(Type.DEBUG, "No local vars to parse"));
+            return;
+        }
+
+        Map<String, String> parsedVars = parseVars(test.getVars(), runLogs);
+        for (String key : parsedVars.keySet()) {
+            log.info("Found local var {} with value {}", key, parsedVars.get(key));
+            runLogs.add(Log.of(Type.DEBUG, "Found local var %s with values %s", key, parsedVars.get(key)));
+            context.setVariable(key, parsedVars.get(key));
+        }
+    }
 }

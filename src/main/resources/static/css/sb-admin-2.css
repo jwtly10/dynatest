@@ -32,6 +32,10 @@
     color: black;
 }
 
+.log-debug {
+    color: gray;
+}
+
 .log-error {
     color: #a64949;
 }
