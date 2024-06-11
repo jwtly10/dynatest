@@ -55,26 +55,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const newTestSuiteBtn = document.getElementById("newTestSuite")
     newTestSuiteBtn.addEventListener('click', async function (e) {
         // Init an example test suite
-        const exampleJson = {
-            "tests": [
-                {
-                    "name": "New Test",
-                    "description": "Example simple test",
-                    "steps": [
-                        {
-                            "stepName": "Make a request",
-                            "request": {
-                                "method": "GET",
-                                "url": "https://httpbin.org/get",
-                                "headers": {
-                                    "Content-Type": "application/json",
-                                    "Accept": "application/json"
-                                }
-                            }
-                        }
-                    ]
-                }]
-        }
+        const exampleJson = exampleTestJson // See end of file
 
         const newData = {
             name: "New Test Suite",
@@ -326,12 +307,19 @@ function renderLogs(logs) {
         } else if (log.type === 'WARN') {
             logElement.className = 'log-warn';
             logElement.innerHTML = `<b>${log.type}:</b> ${log.message}`;
-        } else if (log.type === 'PASS') {
+        } else if (log.type === 'STEP_PASS') {
             logElement.className = 'log-pass';
             logElement.innerHTML = `
+            <br>
             ======================================================= <br>
-            ================== TEST SUITE PASSED ================== <br>
+            ===================== ${log.message} ===================== <br>
             ======================================================= <br>
+            <br>
+            `
+        } else if (log.type === 'TEST_PASS') {
+            logElement.className = 'log-pass';
+            logElement.innerHTML = `
+            <br>
             ${log.message}`;
         } else if (log.type === 'FAIL') {
             logElement.className = 'log-fail';
@@ -346,7 +334,7 @@ function renderLogs(logs) {
         } else if (log.type === 'JSON') {
             logElement.className = 'log-json';
             try {
-                logElement.innerHTML = `<pre><code>${JSON.stringify(JSON.parse(log.message), null, 2)}</code></pre>`
+                logElement.textContent = JSON.stringify(JSON.parse(log.message), null, 2)
             } catch (e) {
                 console.error("Failed to parse JSON in logs: ", e)
                 logElement.textContent = log.message;
@@ -453,4 +441,135 @@ function setAlert(message, type) {
             console.error("This alert type doesnt exist: " + type)
             break;
     }
+}
+
+const exampleTestJson = {
+    "tests": [
+        {
+            "name": "Example server create profile and survey",
+            "vars": {
+                "BASE_URL": "http://localhost:8080/demo",
+                "X-API-KEY": "71b80106-be79-41a9-bc79-ed0b1ecfe0b7",
+                "EMAIL": "${randomEmail(demo)}"
+            },
+            "description": "",
+            "steps": [
+                {
+                    "stepName": "Create profile",
+                    "request": {
+                        "method": "POST",
+                        "url": "${BASE_URL}/create-member",
+                        "headers": {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json",
+                            "X-API-KEY": "${X-API-KEY}"
+                        },
+                        "body": {
+                            "firstName": "Test",
+                            "lastName": "Test",
+                            "email": "${EMAIL}",
+                            "dob": "2000-03-25",
+                            "phone": "077041357733"
+                        },
+                        "storeValues": {
+                            "profileID": "body.userId"
+                        }
+                    },
+                    "expectedResponse": {
+                        "statusCode": 200,
+                        "validationSchema": {
+                            "type": "object",
+                            "properties": {
+                                "userId": {
+                                    "type": "number"
+                                }
+                            },
+                            "required": [
+                                "userId"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "stepName": "Check profile",
+                    "request": {
+                        "method": "GET",
+                        "url": "${BASE_URL}/get-member",
+                        "headers": {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json",
+                            "X-API-KEY": "${X-API-KEY}"
+                        },
+                        "queryParams": {
+                            "id": "${profileID}"
+                        }
+                    },
+                    "expectedResponse": {
+                        "statusCode": 200,
+                        "validationSchema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "number"
+                                },
+                                "firstName": {
+                                    "type": "string"
+                                },
+                                "lastName": {
+                                    "type": "string"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "phone": {
+                                    "type": "string"
+                                },
+                                "dob": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "id",
+                                "firstName",
+                                "lastName",
+                                "email",
+                                "phone",
+                                "dob"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "stepName": "Submit Survey",
+                    "request": {
+                        "method": "POST",
+                        "url": "${BASE_URL}/create-survey",
+                        "headers": {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json",
+                            "X-API-KEY": "${X-API-KEY}"
+                        },
+                        "body": {
+                            "profileId": "${profileID}",
+                            "surveyData": "Example survey answer"
+                        }
+                    },
+                    "expectedResponse": {
+                        "statusCode": 200,
+                        "validationSchema": {
+                            "type": "object",
+                            "properties": {
+                                "surveyId": {
+                                    "type": "number"
+                                }
+                            },
+                            "required": [
+                                "surveyId"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
 }

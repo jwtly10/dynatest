@@ -1,14 +1,14 @@
 /* Custom styles */
 .editor {
-    height: 100%
+    height: 700px !important;
 }
 
 .CodeMirror {
-    height: 100%
+    height: 700px !important;
 }
 
 .table-container {
-    height: 250px;
+    height: 300px;
     overflow-y: auto;
 }
 
@@ -19,7 +19,7 @@
 }
 
 .log-container {
-    max-height: 250px;
+    /*max-height: 300px;*/
     overflow-y: auto;
     background-color: #f8f9fa;
     padding: 10px;
