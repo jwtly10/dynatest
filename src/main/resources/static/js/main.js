@@ -21,7 +21,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const navLinks = document.querySelectorAll('.nav-link.collapsed');
     navLinks.forEach(link => {
         link.addEventListener('click', async function (e) {
-            await initNavLink(this, e)
+            showMainContent()
+            hideAlerts()
+            e.preventDefault();
+            const testSuiteId = this.getAttribute('data-id');
+            await fetchTestSuiteDetails(testSuiteId);
         });
     });
 
@@ -84,7 +88,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
         sidebarList.appendChild(newListItem);
 
         newListItem.addEventListener('click', async function (e) {
-            await initNavLink(this, e)
+            showMainContent()
+            hideAlerts()
+            e.preventDefault();
+            await fetchTestSuiteDetails(newData.id);
         });
 
         await fetchTestSuiteDetails(newData.id)
@@ -270,13 +277,18 @@ function updateMainContent(data) {
     metaUpdated.textContent = formatDate(data.entity.updatedAt)
 
     displayHistoryRunLog(data.runLogs)
-    try {
-        const logs = JSON.parse(data.metaData.lastRunLog)
-        renderLogs(logs)
-    } catch (e) {
+    if (data.metaData.lastRunLog !== "") {
+        try {
+            const logs = JSON.parse(data.metaData.lastRunLog)
+            renderLogs(logs)
+        } catch (e) {
+            const logContainer = document.getElementById('outputLogs');
+            logContainer.innerHTML = '';
+            console.error("Failed to parse JSON logs from output logs")
+        }
+    } else {
         const logContainer = document.getElementById('outputLogs');
         logContainer.innerHTML = '';
-        console.error("Failed to parse JSON logs from output logs")
     }
 }
 
@@ -378,14 +390,6 @@ function displayHistoryRunLog(logs) {
 
         container.appendChild(logRow);
     });
-}
-
-async function initNavLink(element, e) {
-    showMainContent()
-    hideAlerts()
-    e.preventDefault();
-    const testSuiteId = element.getAttribute('data-id');
-    await fetchTestSuiteDetails(testSuiteId);
 }
 
 function updateSidebarTestSuiteName(id, newName) {
