@@ -11,10 +11,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     currentConfigEditor = CodeMirror.fromTextArea(document.getElementById('testSuiteConfig'), {
         mode: "application/json",
-        theme: "monokai",
+        // theme: "monokai",
         lineNumbers: true,
         gutters: ["CodeMirror-lint-markers"],
-        lint: true
+        lint: true,
     });
 
     // Init test suite nav links
@@ -351,7 +351,7 @@ function displayHistoryRunLog(logs) {
     const container = document.getElementById('runLogsContainer');
     container.innerHTML = '';
 
-    logs.forEach(log => {
+    logs.forEach((log, index) => {
         const logRow = document.createElement('tr');
 
         const status = document.createElement("i");
@@ -363,12 +363,11 @@ function displayHistoryRunLog(logs) {
                 status.className = "fa fa-times text-danger";
                 break;
             default:
-                status.className = "";
-                break;
+                return;
         }
 
         logRow.innerHTML = `
-            <td>${log.id}</td>
+            <td>${logs.length - index}</td>
             <td></td>
             <td>${new Date(log.startTime).toLocaleString()}</td>
             <td>${new Date(log.endTime).toLocaleString()}</td>
