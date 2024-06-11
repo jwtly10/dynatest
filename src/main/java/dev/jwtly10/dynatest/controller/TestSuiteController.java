@@ -8,6 +8,11 @@ import dev.jwtly10.dynatest.models.TestSuiteEntity;
 import dev.jwtly10.dynatest.parser.JsonParser;
 import dev.jwtly10.dynatest.services.SuiteService;
 import dev.jwtly10.dynatest.services.TestSuiteService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,27 +34,37 @@ public class TestSuiteController {
         this.suiteService = suiteService;
     }
 
+    @Operation(summary = "Save a new test suite")
     @PostMapping("/new")
     public TestSuiteEntity saveTestSuite(@RequestBody TestSuiteRequestBody req) {
         return testSuiteService.saveTestSuite(req.getName(), req.getConfiguration());
     }
 
+    @Operation(summary = "Delete a test suite by ID")
     @DeleteMapping("/delete/{id}")
     public void deleteTestSuite(@PathVariable int id) {
         testSuiteService.deleteTestSuite(id);
     }
 
+    @Operation(summary = "Get all active test suites")
     @GetMapping
     public List<TestSuiteEntity> getAllTestSuites() {
         return testSuiteService.getAllActiveTestSuites();
     }
 
+    @Operation(summary = "Get a test suite by ID")
     @GetMapping("/{id}")
     public Optional<TestSuiteDataResponseBody> getTestSuiteById(@PathVariable int id) {
-        // Doesnt just get test suite data, but also gets all meta and log data about the suite
         return suiteService.getAllDataFromTestSuite(id);
     }
 
+    @Operation(summary = "Update a test suite")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Updated successfully",
+                    content = @Content(schema = @Schema(implementation = TestSuite.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid JSON",
+                    content = @Content(schema = @Schema(implementation = String.class)))
+    })
     @PutMapping("update/{id}")
     public ResponseEntity<?> updateTestSuite(@PathVariable int id, @RequestBody TestSuiteRequestBody req) {
         try {
