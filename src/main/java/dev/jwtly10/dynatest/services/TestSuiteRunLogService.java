@@ -2,7 +2,7 @@ package dev.jwtly10.dynatest.services;
 
 import dev.jwtly10.dynatest.enums.Status;
 import dev.jwtly10.dynatest.models.TestSuiteRunLogEntity;
-import dev.jwtly10.dynatest.models.TestSuiteRunLogRepository;
+import dev.jwtly10.dynatest.respository.TestSuiteRunLogRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

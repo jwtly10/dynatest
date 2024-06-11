@@ -1,8 +1,8 @@
 package dev.jwtly10.dynatest.config;
 
 import dev.jwtly10.dynatest.context.TestContext;
+import dev.jwtly10.dynatest.handlers.FunctionHandler;
 import dev.jwtly10.dynatest.parser.TemplateParser;
-import dev.jwtly10.dynatest.util.FunctionHandler;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration

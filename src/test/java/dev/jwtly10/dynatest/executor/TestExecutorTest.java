@@ -1,11 +1,11 @@
 package dev.jwtly10.dynatest.executor;
 
 import dev.jwtly10.dynatest.config.TemplateParserConfig;
+import dev.jwtly10.dynatest.handlers.FunctionHandler;
 import dev.jwtly10.dynatest.models.*;
 import dev.jwtly10.dynatest.parser.JsonParser;
 import dev.jwtly10.dynatest.services.HttpClientService;
 import dev.jwtly10.dynatest.services.SchemaValidationService;
-import dev.jwtly10.dynatest.util.FunctionHandler;
 import dev.jwtly10.dynatest.util.JsonValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

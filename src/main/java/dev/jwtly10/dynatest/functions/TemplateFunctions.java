@@ -1,4 +1,6 @@
-package dev.jwtly10.dynatest.util;
+package dev.jwtly10.dynatest.functions;
+
+import dev.jwtly10.dynatest.util.SHA512Hash;
 
 public class TemplateFunctions {
     public static String randomEmail() {

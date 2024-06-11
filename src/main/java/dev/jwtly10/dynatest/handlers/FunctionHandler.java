@@ -1,5 +1,6 @@
-package dev.jwtly10.dynatest.util;
+package dev.jwtly10.dynatest.handlers;
 
+import dev.jwtly10.dynatest.functions.TemplateFunctions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

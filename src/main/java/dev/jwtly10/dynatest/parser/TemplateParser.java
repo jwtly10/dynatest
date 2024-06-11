@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.jwtly10.dynatest.context.TestContext;
 import dev.jwtly10.dynatest.enums.Type;
 import dev.jwtly10.dynatest.exceptions.TemplateParserException;
+import dev.jwtly10.dynatest.handlers.FunctionHandler;
 import dev.jwtly10.dynatest.models.*;
-import dev.jwtly10.dynatest.util.FunctionHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
